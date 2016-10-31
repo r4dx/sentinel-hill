@@ -1,0 +1,4 @@
+.pioenvs
+.piolibdeps
+nbproject
+src/conf/configuration.h
