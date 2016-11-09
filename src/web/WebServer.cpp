@@ -5,7 +5,7 @@ WebResponse const WebResponse::invalid = WebResponse("Invalid");
 
 WebServer::WebServer(WiFiServer& server) : server(server) {
     this->handlers = std::map<std::string, IWebHandler*>();
-    this->logger = Logger::defaultLogger;
+    this->logger = Logger::getDefaultLogger();
 }
        
 WebServer::~WebServer() {

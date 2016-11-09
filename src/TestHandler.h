@@ -17,14 +17,19 @@
 #include "web/WebRequest.h"
 #include "web/WebResponse.h"
 #include "web/IWebHandler.h"
+#include "logger/logger.h"
 
 class TestHandler : public IWebHandler {
 public:
     WebResponse get(WebRequest& request);
     WebResponse post(WebRequest& request);
     std::string getPath() const;
-
-
+    TestHandler(Logger* logger);
+private:
+    std::string getLogs();
+    
+    Logger* logger;
+    void sd_test();
 };
 
 #endif /* TESTHANDLER_H */

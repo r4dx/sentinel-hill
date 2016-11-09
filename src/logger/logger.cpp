@@ -1,19 +1,21 @@
 #ifndef UNIT_TEST
 #include "logger.h"
 #include "Arduino.h"
+#include "LoggerFactory.h"
 #include <map>
 
-SerialLogger::SerialLogger(unsigned long baud, 
-        const ITimeProvider& timeProvider) : timeProvider(timeProvider) {
-    Serial.begin(baud);
+Logger::Logger(const Stream& stream, 
+        const ITimeProvider& timeProvider) : 
+        timeProvider(timeProvider),
+        stream(const_cast<Stream&>(stream)) {   
 }
 
-void SerialLogger::setLevel(LogLevel level) {
+void Logger::setLevel(LogLevel level) {
     this->level = level;
 }
 
 
-void SerialLogger::debug(const char* format, ...) {
+void Logger::debug(const char* format, ...) {
     va_list args;
     va_start(args, format);
     this->log(DEBUG, std::string(format), args);
@@ -21,38 +23,38 @@ void SerialLogger::debug(const char* format, ...) {
 }
 
 
-void SerialLogger::debug(std::string format, ...) {
+void Logger::debug(std::string format, ...) {
     va_list args;
     va_start(args, format);
     this->log(DEBUG, format, args);
     va_end(args);
 }
 
-void SerialLogger::info(const char* format, ...) {
+void Logger::info(const char* format, ...) {
     va_list args;
     va_start(args, format);  
     this->log(INFO, std::string(format), args);
     va_end(args);
 }
 
-void SerialLogger::info(std::string format, ...) {
+void Logger::info(std::string format, ...) {
     va_list args;
     va_start(args, format);  
     this->log(INFO, format, args);
     va_end(args);
 }
 
-void SerialLogger::log(LogLevel level, std::string format, va_list args) {
+void Logger::log(LogLevel level, std::string format, va_list args) {
     if (level < this->level)
         return;
     
     std::string time = timeProvider.now();
     time = time.substr(0, time.size() - 1);
     std::string newFormat = "[%s] " + levelToStr(level) + " " + format + "\n";
-    Serial.printf(newFormat.c_str(), time.c_str(), args);
+    stream.printf(newFormat.c_str(), time.c_str(), args);
 }
 
-std::string SerialLogger::levelToStr(LogLevel level) const {
+std::string Logger::levelToStr(LogLevel level) const {
     std::map< LogLevel, std::string > map = {
         { DEBUG, "DEBUG" },
         { INFO, "INFO" },
@@ -63,7 +65,15 @@ std::string SerialLogger::levelToStr(LogLevel level) const {
     return map[level];
 }
 
-Logger* Logger::defaultLogger = new SerialLogger(112500, 
-        *(new MillisTimeProvider()));
+Logger* Logger::getDefaultLogger() {
+    
+    if (defaultLogger == 0) {
+        defaultLogger = LoggerFactory::createDefaultLogger();
+    }
+    
+    return defaultLogger;
+}
+
+Logger* Logger::defaultLogger = 0;
 
 #endif
