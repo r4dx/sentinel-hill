@@ -26,8 +26,16 @@ void TestHandler::sd_test() {
 }
 
 std::string TestHandler::getLogs() {
+    logger->debug("Opening file... " + LoggerFactory::DefaultLoggerFileName);   
     File file = SD.open(LoggerFactory::DefaultLoggerFileName.c_str(), FILE_READ);
-    std::string result = std::string(file.readString().c_str());
+    if (strlen(file.name()) == 0) {
+        logger->error("Cannot open file");   
+        return "";
+    }
+    logger->debug("Reading file... %s", file.name());   
+    String fileContent = file.readString();
+    logger->debug("Result is " + std::string(fileContent.c_str()));
+    std::string result = std::string(fileContent.c_str());
     file.close();
     return result;
 }
@@ -43,6 +51,8 @@ WebResponse TestHandler::post(WebRequest& request) {
 
 WebResponse TestHandler::get(WebRequest& request) {
     std::string logs = getLogs();
+    if (logs == "")
+        return WebResponse::invalid;
     
-    return WebResponse(getLogs());
+    return WebResponse(logs);
 }

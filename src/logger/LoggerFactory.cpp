@@ -13,4 +13,4 @@ Logger* LoggerFactory::createDefaultLogger() {
 }
 
 File LoggerFactory::file;
-const std::string LoggerFactory::DefaultLoggerFileName = "sentinel-hill.log";
+const std::string LoggerFactory::DefaultLoggerFileName = "/sentinel-hill.log";
