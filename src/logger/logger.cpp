@@ -64,8 +64,9 @@ void Logger::log(LogLevel level, std::string format, va_list args) {
     
     std::string time = timeProvider.now();
     time = time.substr(0, time.size() - 1);
-    std::string newFormat = "[%s] " + levelToStr(level) + " " + format + "\n";
-    stream.printf(newFormat.c_str(), time.c_str(), args);
+    std::string newFormat = "[" + time + "] " + 
+            levelToStr(level) + " " + format + "\n";
+    stream.printf(newFormat.c_str(), args);
 }
 
 std::string Logger::levelToStr(LogLevel level) const {

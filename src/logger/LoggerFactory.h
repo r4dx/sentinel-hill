@@ -8,7 +8,7 @@ public:
     static Logger* createDefaultLogger();
     
     const static std::string DefaultLoggerFileName;
-private:
+private:  
     static File file;
 };
 

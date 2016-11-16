@@ -18,6 +18,7 @@
 #include "web/WebResponse.h"
 #include "web/IWebHandler.h"
 #include "logger/logger.h"
+#include <SD.h>
 
 class TestHandler : public IWebHandler {
 public:
@@ -26,6 +27,7 @@ public:
     std::string getPath() const;
     TestHandler(Logger* logger);
 private:
+    std::string readFromFile(File* file);
     std::string getLogs();
     
     Logger* logger;
