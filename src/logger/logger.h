@@ -21,6 +21,8 @@ public:
     void debug(std::string format, ...);    
     void info(const char* format, ...);
     void info(std::string format, ...);
+    void error(const char* format, ...);
+    void error(std::string format, ...);
     
     static Logger* getDefaultLogger();    
 private:

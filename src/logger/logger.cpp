@@ -44,6 +44,20 @@ void Logger::info(std::string format, ...) {
     va_end(args);
 }
 
+void Logger::error(const char* format, ...) {
+    va_list args;
+    va_start(args, format);  
+    this->log(ERROR, std::string(format), args);
+    va_end(args);
+}
+
+void Logger::error(std::string format, ...) {
+    va_list args;
+    va_start(args, format);  
+    this->log(ERROR, format, args);
+    va_end(args);
+}
+
 void Logger::log(LogLevel level, std::string format, va_list args) {
     if (level < this->level)
         return;
