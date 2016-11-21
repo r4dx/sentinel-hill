@@ -83,9 +83,8 @@ std::string WebServer::getAllHandlersString() {
     
     typedef std::map<std::string, IWebHandler*>::iterator it_type;
     
-    for (it_type iterator = this->handlers.begin(); 
-            iterator != this->handlers.end(); iterator++) {
-        result += iterator->first + " - " + (iterator->second == nullptr ? 
+    for (auto& iterator : this->handlers) {
+        result += iterator.first + " - " + (iterator.second == nullptr ? 
             "NULL" : "OKAY");
     }
     
