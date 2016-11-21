@@ -26,6 +26,7 @@ public:
     WebResponse post(WebRequest& request);
     std::string getPath() const;
     TestHandler(Logger* logger);
+    ~TestHandler() override {}
 private:
     std::string readFromFile(File* file);
     std::string getLogs();

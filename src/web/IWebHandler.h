@@ -3,6 +3,7 @@
 
 class IWebHandler {
 public:
+    virtual ~IWebHandler() {};
     virtual std::string getPath() const = 0;
     virtual WebResponse get(WebRequest& request) = 0;
     virtual WebResponse post(WebRequest& request) = 0;
