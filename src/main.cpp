@@ -6,7 +6,7 @@
 #include "ota/ota.h"
 #include "TestHandler.h"
 
-OverTheAirUploadReceiver* otaReceiver = NULL;
+OverTheAirUploadReceiver* otaReceiver = nullptr;
 Logger* logger;
 WiFiServer* server;
 WebServer* web;
@@ -26,7 +26,7 @@ void setup() {
 }
 
 void loop() {
-    if (otaReceiver == NULL) {
+    if (otaReceiver == nullptr) {
         logger->info("loading stage 2...");
             otaReceiver = new OverTheAirUploadReceiver(*logger, 
                     WiFiConfiguration::SSID, WiFiConfiguration::Password);

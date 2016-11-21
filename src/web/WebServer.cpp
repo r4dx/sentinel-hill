@@ -58,7 +58,7 @@ WebResponse WebServer::handleRequest(WebRequest request) {
     
     logger->debug("Getting a handler");
     IWebHandler* handler = this->handlers[request.getPath()];
-    if (handler == NULL) {
+    if (handler == nullptr) {
         logger->debug("handler is NULL for some reason!!!");
         return WebResponse::invalid;
     }
@@ -85,7 +85,7 @@ std::string WebServer::getAllHandlersString() {
     
     for (it_type iterator = this->handlers.begin(); 
             iterator != this->handlers.end(); iterator++) {
-        result += iterator->first + " - " + (iterator->second == NULL ? 
+        result += iterator->first + " - " + (iterator->second == nullptr ? 
             "NULL" : "OKAY");
     }
     
