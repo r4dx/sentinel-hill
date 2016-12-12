@@ -101,9 +101,7 @@ bool WebServer::registerHandler(const IWebHandler& handler) {
         return false;
     
     logger->debug("Adding handler " + handler.getPath());
-    
     this->handlers[handler.getPath()] = &(const_cast<IWebHandler&>(handler));
-    
     logger->debug("All handlers are: " + this->getAllHandlersString());
     
     return true;

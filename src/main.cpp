@@ -29,7 +29,7 @@ void loop() {
     if (otaReceiver == nullptr) {
         logger->info("loading stage 2...");
             otaReceiver = new OverTheAirUploadReceiver(*logger, 
-                    WiFiConfiguration::SSID, WiFiConfiguration::Password);
+                    configuration::wifi::SSID, configuration::wifi::Password);
             return;
     }
 

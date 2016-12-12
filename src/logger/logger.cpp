@@ -14,59 +14,13 @@ void Logger::setLevel(LogLevel level) {
     this->level = level;
 }
 
-
-void Logger::debug(const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    this->log(DEBUG, std::string(format), args);
-    va_end(args);
-}
-
-
-void Logger::debug(std::string format, ...) {
-    va_list args;
-    va_start(args, format);
-    this->log(DEBUG, format, args);
-    va_end(args);
-}
-
-void Logger::info(const char* format, ...) {
-    va_list args;
-    va_start(args, format);  
-    this->log(INFO, std::string(format), args);
-    va_end(args);
-}
-
-void Logger::info(std::string format, ...) {
-    va_list args;
-    va_start(args, format);  
-    this->log(INFO, format, args);
-    va_end(args);
-}
-
-void Logger::error(const char* format, ...) {
-    va_list args;
-    va_start(args, format);  
-    this->log(ERROR, std::string(format), args);
-    va_end(args);
-}
-
-void Logger::error(std::string format, ...) {
-    va_list args;
-    va_start(args, format);  
-    this->log(ERROR, format, args);
-    va_end(args);
-}
-
-void Logger::log(LogLevel level, std::string format, va_list args) {
-    if (level < this->level)
-        return;
-    
+const char* Logger::format(LogLevel level, std::string value) {
     std::string time = timeProvider.now();
     time = time.substr(0, time.size() - 1);
     std::string newFormat = "[" + time + "] " + 
-            levelToStr(level) + " " + format + "\n";
-    stream.printf(newFormat.c_str(), args);
+            levelToStr(level) + " " + value + "\n";
+    
+    return newFormat.c_str();
 }
 
 std::string Logger::levelToStr(LogLevel level) const {
@@ -79,6 +33,39 @@ std::string Logger::levelToStr(LogLevel level) const {
     
     return map[level];
 }
+
+
+void Logger::debug(const char* value) {
+    this->log(DEBUG, std::string(value));
+}
+
+void Logger::debug(std::string value) {
+    this->log(DEBUG, value);
+
+}
+void Logger::info(const char* value) {
+    this->log(INFO, std::string(value));
+}
+
+void Logger::info(std::string value) {
+    this->log(INFO, value);
+}
+
+void Logger::error(const char* value) {
+    this->log(ERROR, std::string(value));
+}
+
+void Logger::error(std::string value) {
+    this->log(ERROR, value);
+}
+
+void Logger::log(LogLevel level, std::string value) {
+    if (level < this->level)
+        return;
+
+    stream.printf(this->format(level, value));
+}
+
 
 Logger* Logger::getDefaultLogger() {
     
