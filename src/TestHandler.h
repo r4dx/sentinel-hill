@@ -14,26 +14,29 @@
 #ifndef TESTHANDLER_H
 #define TESTHANDLER_H
 
-#include "web/WebRequest.h"
-#include "web/WebResponse.h"
 #include "web/IWebHandler.h"
 #include "logger/logger.h"
 #include <SD.h>
 
-class TestHandler : public IWebHandler {
-public:
-    WebResponse get(WebRequest& request);
-    WebResponse post(WebRequest& request);
-    std::string getPath() const;
-    TestHandler(Logger* logger);
-    ~TestHandler() override {}
-private:
-    std::string readFromFile(File* file);
-    std::string getLogs();
-    
-    Logger* logger;
-    void sd_test();
-};
+namespace sentinel {
+    class TestHandler : public web::IWebHandler {
+    public:
+        std::string path() const override;
+        web::Method method() const override;
 
+        void setSender(web::IWebSender& sender) override;
+        void process() override;
+        
+        TestHandler(Logger* logger);
+        ~TestHandler() override {}
+    private:
+        std::string readFromFile(File* file);
+        std::string getLogs();
+
+        web::IWebSender* sender;
+        Logger* logger;
+        void sd_test();
+    };
+}
 #endif /* TESTHANDLER_H */
 
