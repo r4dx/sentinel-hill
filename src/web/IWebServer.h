@@ -3,6 +3,7 @@
 
 #include "IWebHandler.h"
 #include "logger/logger.h"
+#include "IWebFile.h"
 
 namespace sentinel {
     namespace web {
@@ -22,8 +23,13 @@ namespace sentinel {
         class IWebSender {
         public:
             virtual ~IWebSender() { };
+            
             virtual void send(int code, const std::string& content_type, 
                 const std::string& content) = 0;
+            
+            virtual size_t streamFile(IWebFile& file, 
+                const std::string& contentType) = 0;
+
         };
     }
 }

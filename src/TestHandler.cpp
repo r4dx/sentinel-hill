@@ -3,10 +3,12 @@
 #include "time/TimeString.h"
 #include <logger/LoggerFactory.h>
 #include "sd/File.h"
+#include "sd/SDWebFile.h"
+#include "web/IWebFile.h"
 
 namespace sentinel {
     std::string TestHandler::path() const {   
-        return "Test";
+        return "/Test";
     }
 
     web::Method TestHandler::method() const {   
@@ -28,21 +30,6 @@ namespace sentinel {
         file = SD.open("GOTCHA", FILE_READ);
         logger->info(file.readString().c_str());
         file.close();
-    }
-
-    std::string TestHandler::getLogs() {
-        logger->debug("Opening file... " + LoggerFactory::DefaultLoggerFileName);   
-        File file = SD.open(LoggerFactory::DefaultLoggerFileName.c_str(), FILE_READ);
-        if (!sd::file::valid(&file)) {
-            logger->error("Cannot open file");   
-            return "";
-        }
-        logger->debug("Reading file... %s", file.name());
-        std::string fileContent = readFromFile(&file);
-        logger->debug("Result is " + fileContent);
-        std::string result = std::string(fileContent.c_str());
-        file.close();
-        return result;
     }
 
     std::string TestHandler::readFromFile(File* file) {
@@ -78,13 +65,15 @@ namespace sentinel {
     }
 
     void TestHandler::process() {
-        std::string logs = getLogs();
-        
-        if (logs == "") {
-            sender->send(404, "text/html", "Not Found");
+        logger->debug("Opening file... " + LoggerFactory::DefaultLoggerFileName);   
+        File file = SD.open(LoggerFactory::DefaultLoggerFileName.c_str(), FILE_READ);
+        if (!sd::file::valid(&file)) {
+            logger->error("Cannot open file");   
             return;
         }
-
-        sender->send(200, "text/html", logs);
+        logger->debug("Converting to IWebFile... %s", file.name());
+        sd::file::SDWebFile webFile(&file);
+        sender->streamFile(webFile, "");
+        file.close();
     }
 }
