@@ -4,7 +4,7 @@
 #include "conf/configuration.h"
 #include "logger/logger.h"
 #include "ota/ota.h"
-#include "TestHandler.h"
+#include "handler/log/GetLogHandler.h"
 #include "logger/LoggerFactory.h"
 
 sentinel::ota::OverTheAirUploadReceiver* otaReceiver = nullptr;
@@ -18,7 +18,8 @@ void setup() {
     logger->setLevel(sentinel::log::DEBUG);
     logger->info("loading stage 1...");
 
-    sentinel::TestHandler* handler = new sentinel::TestHandler(logger);
+    sentinel::handler::log::GetLogHandler* handler = 
+            new sentinel::handler::log::GetLogHandler(logger);
 
     server = new ESP8266WebServer(80);
     web = new sentinel::web::ESPWebServer(*server);

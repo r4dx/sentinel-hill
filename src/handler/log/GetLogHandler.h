@@ -17,26 +17,27 @@
 #include "web/IWebHandler.h"
 #include "logger/logger.h"
 #include <SD.h>
+#include <string>
 
 namespace sentinel {
-    class TestHandler : public web::IWebHandler {
-    public:
-        std::string path() const override;
-        web::Method method() const override;
+    namespace handler {
+        namespace log {
+            class GetLogHandler : public web::IWebHandler {
+            public:
+                std::string path() const override;
+                web::Method method() const override;
 
-        void setSender(web::IWebSender& sender) override;
-        void process() override;
-        
-        TestHandler(log::Logger* logger);
-        ~TestHandler() override {}
-    private:
-        std::string readFromFile(File* file);
-        std::string getLogs();
+                void setSender(web::IWebSender& sender) override;
+                void process() override;
 
-        web::IWebSender* sender;
-        log::Logger* logger;
-        void sd_test();
-    };
+                GetLogHandler(sentinel::log::Logger* logger);
+                ~GetLogHandler() override {}
+            private:
+                web::IWebSender* sender;
+                sentinel::log::Logger* logger;
+            };
+        }
+    }
 }
 #endif /* TESTHANDLER_H */
 
