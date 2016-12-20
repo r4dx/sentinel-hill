@@ -4,78 +4,70 @@
 #include "LoggerFactory.h"
 #include <map>
 
-Logger::Logger(const Stream& stream, 
-        const ITimeProvider& timeProvider) : 
-        timeProvider(timeProvider),
-        stream(const_cast<Stream&>(stream)) {   
-}
+namespace sentinel {
+    namespace log {
 
-void Logger::setLevel(LogLevel level) {
-    this->level = level;
-}
+        Logger::Logger(const Stream& stream, 
+                const ITimeProvider& timeProvider) : 
+                timeProvider(timeProvider),
+                stream(const_cast<Stream&>(stream)) {   
+        }
 
-const char* Logger::format(LogLevel level, std::string value) {
-    std::string time = timeProvider.now();
-    time = time.substr(0, time.size() - 1);
-    std::string newFormat = "[" + time + "] " + 
-            levelToStr(level) + " " + value + "\n";
-    
-    return newFormat.c_str();
-}
+        void Logger::setLevel(LogLevel level) {
+            this->level = level;
+        }
 
-std::string Logger::levelToStr(LogLevel level) const {
-    std::map< LogLevel, std::string > map = {
-        { DEBUG, "DEBUG" },
-        { INFO, "INFO" },
-        { WARN, "WARN" },
-        { ERROR, "ERROR" }
-    };
-    
-    return map[level];
-}
+        const char* Logger::format(LogLevel level, std::string value) {
+            std::string time = timeProvider.now();
+            time = time.substr(0, time.size() - 1);
+            std::string newFormat = "[" + time + "] " + 
+                    levelToStr(level) + " " + value + "\n";
 
+            return newFormat.c_str();
+        }
 
-void Logger::debug(const char* value) {
-    this->log(DEBUG, std::string(value));
-}
+        std::string Logger::levelToStr(LogLevel level) const {
+            std::map< LogLevel, std::string > map = {
+                { DEBUG, "DEBUG" },
+                { INFO, "INFO" },
+                { WARN, "WARN" },
+                { ERROR, "ERROR" }
+            };
 
-void Logger::debug(std::string value) {
-    this->log(DEBUG, value);
-
-}
-void Logger::info(const char* value) {
-    this->log(INFO, std::string(value));
-}
-
-void Logger::info(std::string value) {
-    this->log(INFO, value);
-}
-
-void Logger::error(const char* value) {
-    this->log(ERROR, std::string(value));
-}
-
-void Logger::error(std::string value) {
-    this->log(ERROR, value);
-}
-
-void Logger::log(LogLevel level, std::string value) {
-    if (level < this->level)
-        return;
-
-    stream.printf(this->format(level, value));
-}
+            return map[level];
+        }
 
 
-Logger* Logger::getDefaultLogger() {
-    
-    if (defaultLogger == 0) {
-        defaultLogger = LoggerFactory::createDefaultLogger();
+        void Logger::debug(const char* value) {
+            this->log(DEBUG, std::string(value));
+        }
+
+        void Logger::debug(std::string value) {
+            this->log(DEBUG, value);
+
+        }
+        void Logger::info(const char* value) {
+            this->log(INFO, std::string(value));
+        }
+
+        void Logger::info(std::string value) {
+            this->log(INFO, value);
+        }
+
+        void Logger::error(const char* value) {
+            this->log(ERROR, std::string(value));
+        }
+
+        void Logger::error(std::string value) {
+            this->log(ERROR, value);
+        }
+
+        void Logger::log(LogLevel level, std::string value) {
+            if (level < this->level)
+                return;
+
+            stream.printf(this->format(level, value));
+        }
     }
-    
-    return defaultLogger;
 }
-
-Logger* Logger::defaultLogger = 0;
-
 #endif

@@ -27,14 +27,14 @@ namespace sentinel {
         void setSender(web::IWebSender& sender) override;
         void process() override;
         
-        TestHandler(Logger* logger);
+        TestHandler(log::Logger* logger);
         ~TestHandler() override {}
     private:
         std::string readFromFile(File* file);
         std::string getLogs();
 
         web::IWebSender* sender;
-        Logger* logger;
+        log::Logger* logger;
         void sd_test();
     };
 }

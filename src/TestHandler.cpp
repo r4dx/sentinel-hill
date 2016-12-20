@@ -56,7 +56,9 @@ namespace sentinel {
         return result;
     }
 
-    TestHandler::TestHandler(Logger* logger) : logger(logger), sender(nullptr) {
+    TestHandler::TestHandler(log::Logger* logger) : 
+            logger(logger), 
+            sender(nullptr) {
 
     }
     
@@ -65,8 +67,11 @@ namespace sentinel {
     }
 
     void TestHandler::process() {
-        logger->debug("Opening file... " + LoggerFactory::DefaultLoggerFileName);   
-        File file = SD.open(LoggerFactory::DefaultLoggerFileName.c_str(), FILE_READ);
+        logger->debug("Opening file... " + 
+            log::LoggerFactory::DefaultLoggerFileName);   
+        File file = SD.open(log::
+                LoggerFactory::DefaultLoggerFileName.c_str(), FILE_READ);
+        
         if (!sd::file::valid(&file)) {
             logger->error("Cannot open file");   
             return;
