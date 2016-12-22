@@ -5,7 +5,8 @@ namespace sentinel {
     namespace web {
         enum Method {
             GET,
-            POST
+            POST,
+            DELETE
         };
     }
 }

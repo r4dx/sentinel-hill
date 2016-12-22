@@ -56,7 +56,8 @@ namespace sentinel {
                     return HTTP_GET;
                 case Method::POST:
                     return HTTP_POST;
-                    
+                case Method::DELETE:
+                    return HTTP_DELETE;
                 default:
                     return HTTP_GET;
             }

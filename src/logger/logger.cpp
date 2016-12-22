@@ -1,15 +1,15 @@
 #ifndef UNIT_TEST
 #include "logger.h"
 #include "Arduino.h"
-#include "LoggerFactory.h"
+#include "ConsoleFileLoggerWrapper.h"
 #include <map>
 
 namespace sentinel {
     namespace log {
-        Logger::Logger(const Stream& stream, 
+        Logger::Logger(Print& stream, 
                 const ITimeProvider& timeProvider) : 
                 timeProvider(timeProvider),
-                stream(const_cast<Stream&>(stream)) {   
+                stream(stream) {   
         }
 
         void Logger::setLevel(LogLevel level) {

@@ -1,7 +1,7 @@
 #include "GetLogHandler.h"
 #include <SPI.h>
 #include "time/TimeString.h"
-#include <logger/LoggerFactory.h>
+#include <logger/ConsoleFileLoggerWrapper.h>
 #include "sd/File.h"
 #include "sd/SDWebFile.h"
 #include "web/IWebFile.h"
@@ -29,9 +29,9 @@ namespace sentinel {
 
             void GetLogHandler::process() {
                 logger->debug("Opening file... " + 
-                    sentinel::log::LoggerFactory::DefaultLoggerFileName);   
+                    sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName);   
                 File file = SD.open(
-                        sentinel::log::LoggerFactory::DefaultLoggerFileName.c_str(), 
+                        sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName.c_str(), 
                             FILE_READ);
 
                 if (!sd::file::valid(&file)) {

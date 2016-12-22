@@ -3,7 +3,7 @@
 
 #include <stdarg.h>
 #include "time/TimeString.h"
-#include <Stream.h>
+#include <Print.h>
 #include <string>
 
 namespace sentinel {
@@ -17,7 +17,7 @@ namespace sentinel {
 
         class Logger {
         public:
-            Logger(const Stream& stream, const ITimeProvider& timeProvider);
+            Logger(Print& stream, const ITimeProvider& timeProvider);
             void setLevel(LogLevel level);
 
             template <typename ... Args>
@@ -61,7 +61,7 @@ namespace sentinel {
         private:
             LogLevel level = DEBUG;
             const ITimeProvider& timeProvider;
-            Stream& stream;
+            Print& stream;
 
             void log(LogLevel level, std::string value);
             const char* format(LogLevel level, std::string value);

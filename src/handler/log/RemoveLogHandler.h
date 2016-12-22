@@ -11,18 +11,18 @@
  * Created on 30 сентября 2016 г., 20:35
  */
 
-#ifndef GETLOGHANDLER_H
-#define GETLOGHANDLER_H
+#ifndef REMOVELOGHANDLER_H
+#define REMOVELOGHANDLER_H
 
 #include "web/IWebHandler.h"
-#include "logger/logger.h"
+#include "logger/ConsoleFileLoggerWrapper.h"
 #include <SD.h>
 #include <string>
 
 namespace sentinel {
     namespace handler {
         namespace log {
-            class GetLogHandler : public web::IWebHandler {
+            class RemoveLogHandler : public web::IWebHandler {
             public:
                 std::string path() const override;
                 web::Method method() const override;
@@ -30,14 +30,14 @@ namespace sentinel {
                 void setSender(web::IWebSender& sender) override;
                 void process() override;
 
-                GetLogHandler(sentinel::log::Logger* logger);
-                ~GetLogHandler() override {}
+                RemoveLogHandler(sentinel::log::ConsoleFileLoggerWrapper& loggerWrapper);
+                ~RemoveLogHandler() override {}
             private:
                 web::IWebSender* sender;
-                sentinel::log::Logger* logger;
+                sentinel::log::ConsoleFileLoggerWrapper& loggerWrapper;
             };
         }
     }
 }
-#endif /* GETLOGHANDLER_H */
+#endif /* REMOVELOGHANDLER_H */
 
