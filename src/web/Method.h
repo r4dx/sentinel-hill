@@ -1,9 +1,14 @@
 #ifndef METHOD_H
 #define METHOD_H
 
-enum Method {
-    GET,
-    POST
-};
+namespace sentinel {
+    namespace web {
+        enum Method {
+            GET,
+            POST,
+            DELETE
+        };
+    }
+}
 
 #endif

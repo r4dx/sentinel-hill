@@ -1,45 +1,55 @@
 #ifndef UNIT_TEST
 #include <Arduino.h>
-#include "web/WebServer.h"
+#include "web/ESPWebServer.h"
 #include "conf/configuration.h"
 #include "logger/logger.h"
 #include "ota/ota.h"
-#include "TestHandler.h"
+#include "handler/log/GetLogHandler.h"
+#include "logger/ConsoleFileLoggerWrapper.h"
+#include "handler/log/RemoveLogHandler.h"
 
-OverTheAirUploadReceiver* otaReceiver = nullptr;
-Logger* logger;
-WiFiServer* server;
-WebServer* web;
+sentinel::ota::OverTheAirUploadReceiver* otaReceiver = nullptr;
+sentinel::log::ConsoleFileLoggerWrapper* loggerWrapper;
+ESP8266WebServer* server;
+sentinel::web::IWebServer* web;
 
 void setup() {
-    logger = Logger::getDefaultLogger();
-    logger->setLevel(DEBUG);
+    loggerWrapper = new sentinel::log::ConsoleFileLoggerWrapper(
+            sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName,
+            *(new MillisTimeProvider()));
+    
+    auto logger = loggerWrapper->get();
+    
+    logger->setLevel(sentinel::log::DEBUG);
     logger->info("loading stage 1...");
-    
-    TestHandler* handler = new TestHandler(logger);
-    
-    server = new WiFiServer(80);
-    web = new WebServer(*server);
-    
-    web->registerHandler(*handler);
+
+    auto getLogHandler = new sentinel::handler::log::GetLogHandler(logger);
+    auto removeLogHandler = new sentinel::handler::log::RemoveLogHandler(*loggerWrapper);
+
+    server = new ESP8266WebServer(80);
+    web = new sentinel::web::ESPWebServer(*server);
+
+    web->registerHandler(*getLogHandler);
+    web->registerHandler(*removeLogHandler);
     web->start();
 }
 
 void loop() {
+    auto logger = loggerWrapper->get();
+    
     if (otaReceiver == nullptr) {
         logger->info("loading stage 2...");
-            otaReceiver = new OverTheAirUploadReceiver(*logger, 
+            otaReceiver = new sentinel::ota::OverTheAirUploadReceiver(*logger, 
                     configuration::wifi::SSID, configuration::wifi::Password);
             return;
     }
 
     if (otaReceiver->process())
         return;
-    
-    web->process();
-    
-    logger->info("YES");
-    delay(1000);
-}
 
+    web->process();
+
+    logger->info("YES");
+    delay(5000);
+}
 #endif

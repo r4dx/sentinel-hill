@@ -7,14 +7,18 @@
 #include "logger/logger.h"
 #include <string>
 
-class OverTheAirUploadReceiver {
-public:
-    OverTheAirUploadReceiver(Logger& logger, const std::string& ssid, 
-            const std::string& password);
-    bool process();
-    
-private:
-    bool started = false;
-};
+namespace sentinel {
+    namespace ota {
+        class OverTheAirUploadReceiver {
+        public:
+            OverTheAirUploadReceiver(log::Logger& logger, const std::string& ssid, 
+                    const std::string& password);
+            bool process();
+
+        private:
+            bool started = false;
+        };
+    }
+}
 #endif
 #endif

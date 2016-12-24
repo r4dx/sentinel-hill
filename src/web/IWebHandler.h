@@ -1,15 +1,20 @@
 #ifndef IWEBHANDLER_H
 #define IWEBHANDLER_H
 
-class IWebHandler {
-public:
-    virtual ~IWebHandler() {};
-    virtual std::string getPath() const = 0;
-    virtual WebResponse get(WebRequest& request) = 0;
-    virtual WebResponse post(WebRequest& request) = 0;
-    //virtual WebResponse head(WebRequest& request) = 0;
-    //virtual WebResponse put(WebRequest& request) = 0;
-    //virtual WebResponse do_delete(WebRequest& request) = 0;
-    //virtual WebResponse options(WebRequest& request) = 0;
-};
+#include "IWebServer.h"
+#include "Method.h"
+
+namespace sentinel {
+    namespace web {
+        class IWebHandler {
+        public:
+            virtual ~IWebHandler() {};
+            virtual std::string path() const = 0;
+            virtual Method method() const = 0;
+
+            virtual void setSender(IWebSender& sender) = 0;
+            virtual void process() = 0;
+        };
+    }
+}
 #endif
