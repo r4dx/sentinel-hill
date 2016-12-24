@@ -3,7 +3,7 @@
 #include "logger.h"
 #include <SD.h>
 #include <string>
-#include <stream/DualPrint.h>
+#include <stream/DualStreamValve.h>
 #include "time/TimeString.h"
 
 namespace sentinel {
@@ -24,7 +24,7 @@ namespace sentinel {
             ITimeProvider& timeProvider;
             
             Logger* logger;
-            stream::DualPrint* dualPrint;
+            stream::DualStreamValve* dualStream;
             
             bool openFile();
         };

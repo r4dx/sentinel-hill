@@ -50,6 +50,6 @@ void loop() {
     web->process();
 
     logger->info("YES");
-    delay(1000);
+    delay(5000);
 }
 #endif
