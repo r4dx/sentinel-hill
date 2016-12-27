@@ -29,8 +29,8 @@ void setup() {
     server = new ESP8266WebServer(80);
     web = new sentinel::web::ESPWebServer(*server);
 
-    web->registerHandler(*getLogHandler);
-    web->registerHandler(*removeLogHandler);
+    web->on(*getLogHandler);
+    web->on(*removeLogHandler);
     web->start();
 }
 

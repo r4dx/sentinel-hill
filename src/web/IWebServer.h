@@ -14,7 +14,7 @@ namespace sentinel {
         public:
             virtual ~IWebServer() { };
 
-            virtual bool registerHandler(IWebHandler& handler) = 0;
+            virtual bool on(IWebHandler& handler) = 0;
             virtual void start() = 0;
             virtual void process() = 0;
             virtual void stop() = 0;

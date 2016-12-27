@@ -16,7 +16,7 @@ namespace sentinel {
             ESPWebServer(ESP8266WebServer& server);
             ~ESPWebServer();
 
-            bool registerHandler(IWebHandler& handler) override;
+            bool on(IWebHandler& handler) override;
             void start() override;
             void process() override;
             void stop() override;
@@ -27,11 +27,34 @@ namespace sentinel {
             size_t streamFile(IWebFile& file, 
                 const std::string& contentType) override;
             
-        private:
-            HTTPMethod methodToHTTPMethod(Method method);
+        private:           
+            static HTTPMethod methodToHTTPMethod(Method method);
+            static Method httpMethodToMethod(HTTPMethod method);
             
             ESP8266WebServer& server;
             bool started = false;
+           
+            
+            class RequestHandlerWrapper : public RequestHandler {
+            public:
+                RequestHandlerWrapper(IWebHandler& handler) : handler(handler) {}
+                
+                bool canHandle(HTTPMethod method, String uri) override;
+                bool canUpload(String uri) override;
+                bool handle(ESP8266WebServer& server, HTTPMethod requestMethod, 
+                    String requestUri) override;
+                
+            private:
+                IWebHandler& handler;
+            };
+            
+            struct RequestHandlerWrapperListEntry {
+                RequestHandlerWrapper* wrapper;
+                RequestHandlerWrapperListEntry* next;
+            };
+            
+            RequestHandlerWrapperListEntry* wrapperListEntry;            
+            RequestHandlerWrapper* wrap(IWebHandler& handler);
         };
     }
 }

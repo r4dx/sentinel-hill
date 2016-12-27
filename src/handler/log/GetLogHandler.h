@@ -24,15 +24,17 @@ namespace sentinel {
         namespace log {
             class GetLogHandler : public web::IWebHandler {
             public:
-                std::string path() const override;
-                web::Method method() const override;
-
+                bool canHandle() const override;
+                void setPath(web::Method method, std::string uri) override;
                 void setSender(web::IWebSender& sender) override;
-                void process() override;
+                bool handle() override;
 
                 GetLogHandler(sentinel::log::Logger* logger);
                 ~GetLogHandler() override {}
             private:
+                std::string uri;
+                web::Method method;                
+                
                 web::IWebSender* sender;
                 sentinel::log::Logger* logger;
             };

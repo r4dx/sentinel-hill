@@ -9,11 +9,12 @@ namespace sentinel {
         class IWebHandler {
         public:
             virtual ~IWebHandler() {};
-            virtual std::string path() const = 0;
-            virtual Method method() const = 0;
-
+            
+            virtual void setPath(Method method, std::string uri) = 0;
             virtual void setSender(IWebSender& sender) = 0;
-            virtual void process() = 0;
+            
+            virtual bool canHandle() const = 0;
+            virtual bool handle() = 0;
         };
     }
 }
