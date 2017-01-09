@@ -6,18 +6,10 @@ namespace sentinel {
     namespace web {
         ESPWebServer::ESPWebServer(ESP8266WebServer& server) 
             : server(server),
-            wrapperListEntry (nullptr) { }
+            wrapperList () { }
 
         ESPWebServer::~ESPWebServer() {
-            
-            auto currentListEntry = wrapperListEntry;
-            
-            while (currentListEntry != nullptr) {
-                auto next = currentListEntry->next;
-                delete currentListEntry->wrapper;
-                delete currentListEntry;
-                currentListEntry = next;
-            }
+
         }
 
         void ESPWebServer::start() {
@@ -58,11 +50,11 @@ namespace sentinel {
         
         ESPWebServer::RequestHandlerWrapper* ESPWebServer::wrap(
             IWebHandler& handler) {
-            auto newEntry = new RequestHandlerWrapperListEntry();
-            newEntry->wrapper = new RequestHandlerWrapper(handler);
-            newEntry->next = wrapperListEntry;
-            wrapperListEntry = newEntry;            
-            return wrapperListEntry->wrapper;
+            
+            auto result = new RequestHandlerWrapper(handler);
+            
+            wrapperList.push_front(result);
+            return result;
         }
         
         HTTPMethod ESPWebServer::methodToHTTPMethod(Method method) {
@@ -104,6 +96,8 @@ namespace sentinel {
         
         bool ESPWebServer::RequestHandlerWrapper::canHandle(HTTPMethod method, 
                 String uri) {
+            // N.B. canHandle() + handle() are not thread safe 
+            // (there are no threads in ESP8266)
             handler.setPath(ESPWebServer::httpMethodToMethod(method), 
                     std::string(uri.c_str()));
             return handler.canHandle();

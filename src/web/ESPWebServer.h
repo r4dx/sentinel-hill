@@ -8,6 +8,7 @@
 #include "IWebHandler.h"
 #include "logger/logger.h"
 #include "IWebServer.h"
+#include "collections/ptr_list.h"
 
 namespace sentinel {
     namespace web {
@@ -47,13 +48,8 @@ namespace sentinel {
             private:
                 IWebHandler& handler;
             };
-            
-            struct RequestHandlerWrapperListEntry {
-                RequestHandlerWrapper* wrapper;
-                RequestHandlerWrapperListEntry* next;
-            };
-            
-            RequestHandlerWrapperListEntry* wrapperListEntry;            
+
+            collections::ptr_list<RequestHandlerWrapper> wrapperList;
             RequestHandlerWrapper* wrap(IWebHandler& handler);
         };
     }
