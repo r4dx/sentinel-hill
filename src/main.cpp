@@ -27,7 +27,7 @@ void setup() {
     auto removeLogHandler = new sentinel::handler::log::RemoveLogHandler(*loggerWrapper);
 
     server = new ESP8266WebServer(80);
-    web = new sentinel::web::ESPWebServer(*server);
+    web = new sentinel::web::ESPWebServer(*server, logger);
 
     web->on(*getLogHandler);
     web->on(*removeLogHandler);

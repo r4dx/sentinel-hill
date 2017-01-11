@@ -4,13 +4,12 @@
 
 namespace sentinel {
     namespace web {
-        ESPWebServer::ESPWebServer(ESP8266WebServer& server) 
-            : server(server),
-            wrapperList () { }
-
-        ESPWebServer::~ESPWebServer() {
-
-        }
+        ESPWebServer::ESPWebServer(ESP8266WebServer& server, log::Logger* logger) 
+            : 
+            server(server),
+            wrapperList(),
+            logger(logger)
+            { }
 
         void ESPWebServer::start() {
             if (this->started)
@@ -40,9 +39,6 @@ namespace sentinel {
             if (this->started)
                 return false;
             handler.setSender(*this);
-            
-           
-            
             server.addHandler(wrap(handler));
 
             return true;
@@ -50,37 +46,9 @@ namespace sentinel {
         
         ESPWebServer::RequestHandlerWrapper* ESPWebServer::wrap(
             IWebHandler& handler) {
-            
-            auto result = new RequestHandlerWrapper(handler);
-            
+            auto result = new RequestHandlerWrapper(handler, logger);
             wrapperList.push_front(result);
             return result;
-        }
-        
-        HTTPMethod ESPWebServer::methodToHTTPMethod(Method method) {
-            switch (method) {
-                case Method::GET:
-                    return HTTP_GET;
-                case Method::POST:
-                    return HTTP_POST;
-                case Method::DELETE:
-                    return HTTP_DELETE;
-                default:
-                    return HTTP_GET;
-            }
-        }
-        
-        Method ESPWebServer::httpMethodToMethod(HTTPMethod method) {
-            switch (method) {
-                HTTP_GET:
-                    return Method::GET;
-                HTTP_POST:
-                    return Method::POST;
-                HTTP_DELETE:
-                    return Method::DELETE;
-                default:
-                    return Method::GET;
-            }
         }
         
         void ESPWebServer::send(int code, const std::string& content_type, 
@@ -93,13 +61,16 @@ namespace sentinel {
             
             return server.streamFile(file, contentType.c_str());
         };        
+
+        ESPWebServer::RequestHandlerWrapper::RequestHandlerWrapper(
+            IWebHandler& handler, log::Logger* logger) : 
+            
+            handler(handler), logger(logger) {};
         
         bool ESPWebServer::RequestHandlerWrapper::canHandle(HTTPMethod method, 
                 String uri) {
-            // N.B. canHandle() + handle() are not thread safe 
-            // (there are no threads in ESP8266)
-            handler.setPath(ESPWebServer::httpMethodToMethod(method), 
-                    std::string(uri.c_str()));
+            Method webMethod = httpMethodToMethod(method);            
+            handler.setPath(webMethod, std::string(uri.c_str()));
             return handler.canHandle();
         }
         bool ESPWebServer::RequestHandlerWrapper::canUpload(String uri) {
@@ -109,7 +80,7 @@ namespace sentinel {
             ESP8266WebServer& server, HTTPMethod requestMethod, 
             String requestUri) {
             
-            handler.setPath(ESPWebServer::httpMethodToMethod(requestMethod), 
+            handler.setPath(httpMethodToMethod(requestMethod), 
                     std::string(requestUri.c_str()));
             return handler.handle();            
         }

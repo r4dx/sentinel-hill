@@ -22,10 +22,7 @@ namespace sentinel {
                     logger(logger), 
                     sender(nullptr),
                     uri(""),
-                    method(web::Method::DELETE)                    
-            {
-
-            }
+                    method(web::Method::DELETE) { }
 
             void GetLogHandler::setSender(web::IWebSender& sender) {
                 this->sender = &sender;
