@@ -9,25 +9,26 @@
 namespace sentinel {
     namespace handler {
         namespace log {
-            std::string GetLogHandler::path() const {   
-                return "/logs";
-            }
-
-            web::Method GetLogHandler::method() const {   
-                return web::Method::GET;
+            void GetLogHandler::setPath(web::Method method, std::string uri) {   
+                this->uri = uri;
+                this->method = method;
+            }                
+                
+            bool GetLogHandler::canHandle() const {   
+                return uri.compare("/logs") == 0 && method == web::Method::GET;
             }
 
             GetLogHandler::GetLogHandler(sentinel::log::Logger* logger) : 
                     logger(logger), 
-                    sender(nullptr) {
-
-            }
+                    sender(nullptr),
+                    uri(""),
+                    method(web::Method::DELETE) { }
 
             void GetLogHandler::setSender(web::IWebSender& sender) {
                 this->sender = &sender;
             }
 
-            void GetLogHandler::process() {
+            bool GetLogHandler::handle() {
                 logger->debug("Opening file... " + 
                     sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName);   
                 File file = SD.open(
@@ -36,12 +37,13 @@ namespace sentinel {
 
                 if (!sd::file::valid(&file)) {
                     logger->error("Cannot open file");   
-                    return;
+                    return false;
                 }
                 logger->debug("Converting to IWebFile... %s", file.name());
                 sd::file::SDWebFile webFile(&file);
                 sender->streamFile(webFile, "");
                 file.close();
+                return true;
             }
         }
     }

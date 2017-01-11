@@ -1,15 +1,15 @@
 #ifndef UNIT_TEST
 #include "ESPWebServer.h"
+#include <memory>
 
 namespace sentinel {
     namespace web {
-        ESPWebServer::ESPWebServer(ESP8266WebServer& server) 
-            : server(server) {
-
-        }
-
-        ESPWebServer::~ESPWebServer() {
-        }
+        ESPWebServer::ESPWebServer(ESP8266WebServer& server, log::Logger* logger) 
+            : 
+            server(server),
+            wrapperList(),
+            logger(logger)
+            { }
 
         void ESPWebServer::start() {
             if (this->started)
@@ -35,32 +35,20 @@ namespace sentinel {
         }
 
 
-        bool ESPWebServer::registerHandler(IWebHandler& handler) {
+        bool ESPWebServer::on(IWebHandler& handler) {
             if (this->started)
                 return false;
-
             handler.setSender(*this);
-            
-            ESP8266WebServer::THandlerFunction handlerFunction = 
-                    [&]{ handler.process(); };
-
-            server.on(handler.path().c_str(), 
-                    methodToHTTPMethod(handler.method()), handlerFunction);
+            server.addHandler(wrap(handler));
 
             return true;
         }
         
-        HTTPMethod ESPWebServer::methodToHTTPMethod(Method method) {
-            switch (method) {
-                case Method::GET:
-                    return HTTP_GET;
-                case Method::POST:
-                    return HTTP_POST;
-                case Method::DELETE:
-                    return HTTP_DELETE;
-                default:
-                    return HTTP_GET;
-            }
+        ESPWebServer::RequestHandlerWrapper* ESPWebServer::wrap(
+            IWebHandler& handler) {
+            auto result = new RequestHandlerWrapper(handler, logger);
+            wrapperList.push_front(result);
+            return result;
         }
         
         void ESPWebServer::send(int code, const std::string& content_type, 
@@ -73,6 +61,30 @@ namespace sentinel {
             
             return server.streamFile(file, contentType.c_str());
         };        
+
+        ESPWebServer::RequestHandlerWrapper::RequestHandlerWrapper(
+            IWebHandler& handler, log::Logger* logger) : 
+            
+            handler(handler), logger(logger) {};
+        
+        bool ESPWebServer::RequestHandlerWrapper::canHandle(HTTPMethod method, 
+                String uri) {
+            Method webMethod = httpMethodToMethod(method);            
+            handler.setPath(webMethod, std::string(uri.c_str()));
+            return handler.canHandle();
+        }
+        bool ESPWebServer::RequestHandlerWrapper::canUpload(String uri) {
+            return false;
+        }
+        bool ESPWebServer::RequestHandlerWrapper::handle(
+            ESP8266WebServer& server, HTTPMethod requestMethod, 
+            String requestUri) {
+            
+            handler.setPath(httpMethodToMethod(requestMethod), 
+                    std::string(requestUri.c_str()));
+            return handler.handle();            
+        }
+        
     }
 }
 

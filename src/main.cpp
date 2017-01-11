@@ -4,13 +4,13 @@
 #include "conf/configuration.h"
 #include "logger/logger.h"
 #include "ota/ota.h"
-#include "handler/log/GetLogHandler.h"
 #include "logger/ConsoleFileLoggerWrapper.h"
+#include "handler/log/GetLogHandler.h"
 #include "handler/log/RemoveLogHandler.h"
+#include "handler/sd/BrowseSDHandler.h"
 
 sentinel::ota::OverTheAirUploadReceiver* otaReceiver = nullptr;
 sentinel::log::ConsoleFileLoggerWrapper* loggerWrapper;
-ESP8266WebServer* server;
 sentinel::web::IWebServer* web;
 
 void setup() {
@@ -25,12 +25,14 @@ void setup() {
 
     auto getLogHandler = new sentinel::handler::log::GetLogHandler(logger);
     auto removeLogHandler = new sentinel::handler::log::RemoveLogHandler(*loggerWrapper);
+    auto browseSDHandler = new sentinel::handler::sd::BrowseSDHandler(logger);
 
-    server = new ESP8266WebServer(80);
-    web = new sentinel::web::ESPWebServer(*server);
+    ESP8266WebServer* server = new ESP8266WebServer(80);
+    web = new sentinel::web::ESPWebServer(*server, logger);
 
-    web->registerHandler(*getLogHandler);
-    web->registerHandler(*removeLogHandler);
+    web->on(*getLogHandler);
+    web->on(*removeLogHandler);
+    web->on(*browseSDHandler);
     web->start();
 }
 
