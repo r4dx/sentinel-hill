@@ -24,6 +24,8 @@ namespace sentinel {
                 
                 web::IWebSender* sender;
                 sentinel::log::Logger* logger;
+                
+                std::string getBrowseFolder();
             };
         }
     }

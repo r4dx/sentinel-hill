@@ -45,6 +45,9 @@ void sentinel::collections::ptr_list<T>::push_front(T* x) {
 
 template <typename T>
 T* sentinel::collections::ptr_list<T>::pop_front() {
+    if (head == nullptr)
+        return nullptr;
+    
     auto old_head = head;
     head = head->next;
     T* result = old_head->data;
