@@ -3,7 +3,11 @@
 #include <assert.h>
 
 sd::file::FileListIterator::FileListIterator(File& folder) 
-    : folder(&folder), current(nullptr), isEnd(false) { next(); }
+    : folder(&folder), current(nullptr), isEnd(false) 
+{ 
+    folder.rewindDirectory();
+    next(); 
+}
 
 sd::file::FileListIterator::FileListIterator() : folder(nullptr), 
         current(nullptr), isEnd(true) {

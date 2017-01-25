@@ -19,7 +19,7 @@ namespace sentinel {
                         method == web::Method::GET;
             }
 
-            std::string BrowseSDHandler::getBrowseFolder() {
+            std::string BrowseSDHandler::getBrowsePath() {
                 return uri.substr(3);
             }            
             
@@ -34,22 +34,42 @@ namespace sentinel {
             }
 
             bool BrowseSDHandler::handle() {
-                std::string folderNameS = getBrowseFolder();
-                const char* folderName = folderNameS.c_str();
-                logger->debug("Browsing SD folder: %s", folderName);
-                if (::sd::file::isFolder(folderName)) {
-                    File folder = SD.open(folderName);
-                    folder.rewindDirectory();
+                std::string browsePathS = getBrowsePath();
+                const char* browsePath = browsePathS.c_str();
+                logger->debug("Browsing SD: %s", browsePath);
+                
+                if (::sd::file::isFolder(browsePath))
+                    return serveFolder(browsePath);
+                
+                return serveFile(browsePath);
+            }
+            
+            bool BrowseSDHandler::serveFile(const char* browsePath) {
+                File file = SD.open(browsePath, FILE_READ);
+
+                if (!::sd::file::valid(&file)) {
+                    logger->error("Cannot open file");   
+                    return false;
+                }
+                
+                logger->debug("Converting to IWebFile... %s", file.name());
+                ::sd::file::SDWebFile webFile(&file);
+                sender->streamFile(webFile, "");
+                file.close();
+                return true;                
+            }
+            
+            bool BrowseSDHandler::serveFolder(const char* browsePath) {
+                    File folder = SD.open(browsePath);
                     for (::sd::file::FileListIterator itr(folder);
                             itr != itr.end(); ++itr) {
                         logger->debug("'%s' in folder '%s' is %s", 
-                                itr->fileName->c_str(), folderName, 
+                                itr->fileName->c_str(), browsePath, 
                                 itr->isDirectory ? "directory" : "file");
                     }
                     folder.close();
-                }
-                return true;
-            }
+                    return true;                
+            }            
         }
     }
 }
