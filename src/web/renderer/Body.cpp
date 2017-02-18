@@ -6,6 +6,11 @@ namespace sentinel {
             bool Body::render(IRenderer& renderer) {
                 return renderer.render(*this);
             }
+            
+            Body::~Body() {
+                if (onDestroyFunc)
+                    onDestroyFunc();
+            }
         }
     }
 }

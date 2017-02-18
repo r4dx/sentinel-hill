@@ -27,6 +27,8 @@ namespace sentinel {
             virtual void send(int code, const std::string& content_type, 
                 const std::string& content) = 0;
             
+            virtual void sendContent(const std::string& content) = 0;
+            
             virtual size_t streamFile(IWebFile& file, 
                 const std::string& contentType) = 0;
 

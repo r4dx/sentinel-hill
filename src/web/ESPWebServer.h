@@ -26,6 +26,8 @@ namespace sentinel {
             
             void send(int code, const std::string& content_type, 
                 const std::string& content) override;
+            
+            void sendContent(const std::string& content) override;
 
             size_t streamFile(IWebFile& file, 
                 const std::string& contentType) override;

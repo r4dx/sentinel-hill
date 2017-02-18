@@ -19,8 +19,11 @@ namespace sentinel {
                 BrowseSDHandler(sentinel::log::Logger* logger);
                 ~BrowseSDHandler() override {}
             private:
+                
+                const std::string pathPrefix;
+                
                 std::string uri;
-                web::Method method;                
+                web::Method method;
                 
                 web::IWebSender* sender;
                 sentinel::log::Logger* logger;

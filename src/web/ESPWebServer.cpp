@@ -56,6 +56,11 @@ namespace sentinel {
             server.send(code, content_type.c_str(), content.c_str());
         }
         
+        
+        void ESPWebServer::sendContent(const std::string& content) {
+            server.sendContent(content.c_str());
+        }
+        
         size_t ESPWebServer::streamFile(IWebFile& file, 
                 const std::string& contentType) {
             

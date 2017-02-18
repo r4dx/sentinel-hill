@@ -4,20 +4,28 @@
 #include "sd/File.h"
 #include "sd/SDWebFile.h"
 #include "web/IWebFile.h"
+#include "web/renderer/Body.h"
+#include "web/renderer/Text.h"
+#include "web/renderer/Link.h"
+#include "web/renderer/AsyncHtmlRenderer.h"
 
 namespace sentinel {
     namespace handler {
         namespace sd {
+            
+            const std::string pathPrefix("/sd");
+            
             void BrowseSDHandler::setPath(web::Method method, std::string uri) {   
                 this->uri = uri;
                 this->method = method;
             }                
                 
             bool BrowseSDHandler::canHandle() const {
-                std::string prefix("/sd");
-                return uri.compare(0, prefix.size(), prefix) == 0 && 
+                return uri.compare(0, pathPrefix.size(), pathPrefix) == 0 && 
                         method == web::Method::GET;
             }
+            
+            
 
             std::string BrowseSDHandler::getBrowsePath() {
                 return uri.substr(3);
@@ -61,8 +69,17 @@ namespace sentinel {
             
             bool BrowseSDHandler::serveFolder(const char* browsePath) {
                     File folder = SD.open(browsePath);
+                    web::renderer::Body body;
+                    web::renderer::AsyncHtmlRenderer renderer(sender);
+                    renderer.render(body);
+                    
                     for (::sd::file::FileListIterator itr(folder);
                             itr != itr.end(); ++itr) {
+                                                
+                        std::string linkPath = pathPrefix + "/" + *itr->fileName;
+                        web::renderer::Link link(*itr->fileName, linkPath);
+                        body.add(link);
+                        
                         logger->debug("'%s' in folder '%s' is %s", 
                                 itr->fileName->c_str(), browsePath, 
                                 itr->isDirectory ? "directory" : "file");
