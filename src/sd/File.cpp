@@ -2,7 +2,6 @@
 
 bool sd::file::valid(File* file) {
     return strlen(file->name()) != 0;
-    //return file->available();
 }
 
 bool sd::file::isFolder(std::string path) {

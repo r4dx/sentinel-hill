@@ -11,17 +11,14 @@ namespace sentinel {
     namespace web {
         namespace renderer {
             class AsyncHtmlRenderer: public IRenderer {
-            public:               
-                
-                // Would be much simpler to just add start("body") and end()
-                // and to remove body at all for simplicity reasons
-                
+            public:                              
                 AsyncHtmlRenderer(IWebSender* sender);
                 ~AsyncHtmlRenderer();
                 bool render(Text& renderable) override;
                 bool render(Link& renderable) override;
-                bool render(Body& renderable) override;
-                
+                bool start(std::string name) override;
+                bool end(std::string name) override;
+                bool newLine() override;
             private:
                 IWebSender* sender;
             };

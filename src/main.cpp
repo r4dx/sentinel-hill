@@ -53,7 +53,7 @@ void loop() {
 
     web->process();
 
-    logger->info("YES");
-    delay(5000);
+    //logger->info("YES");
+    delay(100);
 }
 #endif

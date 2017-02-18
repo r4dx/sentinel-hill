@@ -11,7 +11,7 @@ namespace sentinel {
             class Link : public IRenderable {
             public:
                 ~Link() { } ;
-                Link(const std::string& label, const std::string& ref);
+                Link(const std::string label, const std::string ref);
                 bool render(IRenderer& renderer) override;
                 
                 const std::string& getLabel() const {
@@ -23,8 +23,8 @@ namespace sentinel {
                 }
                 
             private:
-                const std::string& label;
-                const std::string& ref;
+                const std::string label;
+                const std::string ref;
             };            
         }
     }

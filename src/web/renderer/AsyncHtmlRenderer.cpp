@@ -1,12 +1,10 @@
 #include "AsyncHtmlRenderer.h"
-#include "Body.h"
 
 namespace sentinel {
     namespace web {
         namespace renderer {
             AsyncHtmlRenderer::AsyncHtmlRenderer(IWebSender* sender) 
                 : sender(sender) { 
-                sender->send(200, nullptr, "");
                 sender->sendContent("<html>");
             }
 
@@ -17,23 +15,28 @@ namespace sentinel {
 
             
             bool AsyncHtmlRenderer::render(Text& renderable) {
-                
+                sender->sendContent("<span>" + renderable.getLabel() + "</span>");
+                return true;
             }
             
             bool AsyncHtmlRenderer::render(Link& renderable) {
-                
+                sender->sendContent("<a href='" + renderable.getRef() + "'>" + 
+                    renderable.getLabel() + "</a>");
+                return true;
             }
             
-            bool AsyncHtmlRenderer::render(Body& renderable) {
-                sender->sendContent("<body>");
-                
-                renderable.onDestroy([this]() {
-                    this->sender->sendContent("</body>");
-                });
-
-                renderable.onAdd([this](IRenderable& renderable) {
-                    renderable.render(*this);
-                });
+            bool AsyncHtmlRenderer::newLine() {
+                sender->sendContent("<br />");
+                return true;
+            }
+            
+            bool AsyncHtmlRenderer::start(std::string name) {
+                sender->sendContent("<" + name + ">");
+                return true;
+            }
+            bool AsyncHtmlRenderer::end(std::string name) {
+                sender->sendContent("</" + name + ">");
+                return true;                
             }
         }
     }

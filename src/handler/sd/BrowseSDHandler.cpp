@@ -4,7 +4,6 @@
 #include "sd/File.h"
 #include "sd/SDWebFile.h"
 #include "web/IWebFile.h"
-#include "web/renderer/Body.h"
 #include "web/renderer/Text.h"
 #include "web/renderer/Link.h"
 #include "web/renderer/AsyncHtmlRenderer.h"
@@ -12,9 +11,7 @@
 namespace sentinel {
     namespace handler {
         namespace sd {
-            
-            const std::string pathPrefix("/sd");
-            
+                        
             void BrowseSDHandler::setPath(web::Method method, std::string uri) {   
                 this->uri = uri;
                 this->method = method;
@@ -35,6 +32,7 @@ namespace sentinel {
                     logger(logger), 
                     sender(nullptr),
                     uri(""),
+                    pathPrefix("/sd"),
                     method(web::Method::GET) { }
 
             void BrowseSDHandler::setSender(web::IWebSender& sender) {
@@ -42,18 +40,17 @@ namespace sentinel {
             }
 
             bool BrowseSDHandler::handle() {
-                std::string browsePathS = getBrowsePath();
-                const char* browsePath = browsePathS.c_str();
-                logger->debug("Browsing SD: %s", browsePath);
+                browsePath = getBrowsePath();
+                logger->debug("Browsing SD: %s", browsePath.c_str());
                 
-                if (::sd::file::isFolder(browsePath))
-                    return serveFolder(browsePath);
+                if (::sd::file::isFolder(browsePath.c_str()))
+                    return serveFolder();
                 
-                return serveFile(browsePath);
+                return serveFile();
             }
             
-            bool BrowseSDHandler::serveFile(const char* browsePath) {
-                File file = SD.open(browsePath, FILE_READ);
+            bool BrowseSDHandler::serveFile() {
+                File file = SD.open(browsePath.c_str(), FILE_READ);
 
                 if (!::sd::file::valid(&file)) {
                     logger->error("Cannot open file");   
@@ -67,26 +64,50 @@ namespace sentinel {
                 return true;                
             }
             
-            bool BrowseSDHandler::serveFolder(const char* browsePath) {
-                    File folder = SD.open(browsePath);
-                    web::renderer::Body body;
-                    web::renderer::AsyncHtmlRenderer renderer(sender);
-                    renderer.render(body);
+            bool BrowseSDHandler::serveFolder() {
+                web::renderer::AsyncHtmlRenderer renderer(sender);
+                const std::string BODY_TAG = "body";
+                renderer.start(BODY_TAG);
+                renderUpLink(&renderer);
                     
-                    for (::sd::file::FileListIterator itr(folder);
-                            itr != itr.end(); ++itr) {
-                                                
-                        std::string linkPath = pathPrefix + "/" + *itr->fileName;
-                        web::renderer::Link link(*itr->fileName, linkPath);
-                        body.add(link);
-                        
-                        logger->debug("'%s' in folder '%s' is %s", 
-                                itr->fileName->c_str(), browsePath, 
-                                itr->isDirectory ? "directory" : "file");
-                    }
-                    folder.close();
-                    return true;                
-            }            
+                File folder = SD.open(browsePath.c_str());
+                for (::sd::file::FileListIterator itr(folder);
+                        itr != itr.end(); ++itr) {
+                    
+                    std::string linkPath = pathPrefix + browsePath + *itr->fileName;                    
+                    if (itr->isDirectory)
+                        linkPath += "/";
+                    
+                    web::renderer::Link link(*itr->fileName, linkPath);
+                    renderer.render(link);
+                    renderer.newLine();
+                    logger->debug("'%s' in folder '%s' is %s", 
+                            itr->fileName->c_str(), browsePath.c_str(), 
+                            itr->isDirectory ? "directory" : "file");
+                }
+                folder.close();
+                renderer.end(BODY_TAG);
+                return true;                
+            }
+            
+            void BrowseSDHandler::renderUpLink(web::renderer::IRenderer* renderer) {
+                const std::string delimiter = "/";
+                if (browsePath == "" || browsePath == delimiter || 
+                        browsePath.size() < 2)
+                    return;
+                
+                std::size_t found = browsePath.find_last_of(delimiter, 
+                        browsePath.size() - 2);
+                
+                if (found == std::string::npos)
+                    return;
+                
+                std::string upPath = pathPrefix + browsePath.substr(0, found) + 
+                        delimiter;
+                web::renderer::Link link("..", upPath);
+                renderer->render(link);
+                renderer->newLine();
+            }
         }
     }
 }

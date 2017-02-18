@@ -11,7 +11,7 @@ namespace sentinel {
             class Text : public IRenderable {
             public:
                 ~Text() { } ;
-                Text(const std::string& label);
+                Text(const std::string label);
                 bool render(IRenderer& renderer) override;
                 
                 const std::string& getLabel() const {
@@ -19,7 +19,7 @@ namespace sentinel {
                 }
                 
             private:
-                const std::string& label;
+                const std::string label;
                 
             };            
         }

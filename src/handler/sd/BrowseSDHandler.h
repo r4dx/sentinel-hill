@@ -2,6 +2,7 @@
 #define BROWSESDHANDLER_H
 
 #include "web/IWebHandler.h"
+#include "web/renderer/IRenderer.h"
 #include "logger/logger.h"
 #include <SD.h>
 #include <string>
@@ -22,6 +23,7 @@ namespace sentinel {
                 
                 const std::string pathPrefix;
                 
+                std::string browsePath;
                 std::string uri;
                 web::Method method;
                 
@@ -29,8 +31,9 @@ namespace sentinel {
                 sentinel::log::Logger* logger;
                 
                 std::string getBrowsePath();
-                bool serveFile(const char* browsePath);
-                bool serveFolder(const char* browsePath);
+                bool serveFile();
+                bool serveFolder();
+                void renderUpLink(web::renderer::IRenderer* renderer);
             };
         }
     }
