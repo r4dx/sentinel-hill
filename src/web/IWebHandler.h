@@ -6,6 +6,8 @@
 
 namespace sentinel {
     namespace web {
+        class IWebSender;
+        
         class IWebHandler {
         public:
             virtual ~IWebHandler() {};

@@ -1,4 +1,6 @@
 #ifndef UNIT_TEST
+#include <vector> // hack to make it compile - https://github.com/esp8266/Arduino/issues/2549
+#include <WiFiClient.h>
 #include <Arduino.h>
 #include "web/ESPWebServer.h"
 #include "conf/configuration.h"
@@ -51,7 +53,7 @@ void loop() {
 
     web->process();
 
-    logger->info("YES");
-    delay(5000);
+    //logger->info("YES");
+    delay(100);
 }
 #endif
