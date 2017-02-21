@@ -73,7 +73,6 @@ namespace sentinel {
             dualStream->on(stream::StreamNum::Second);
             return true;
         }
-        
-        const std::string ConsoleFileLoggerWrapper::DefaultLoggerFileName = "/sh.log";
+        const char ConsoleFileLoggerWrapper::DefaultLoggerFileName[] = "/sh.log";
     }
 }

@@ -56,7 +56,8 @@ void loop() {
     if (otaReceiver == nullptr) {
         logger->info("Initializing Over-the-air update receiver");
             otaReceiver = new sentinel::ota::OverTheAirUploadReceiver(*logger, 
-                    configuration::wifi::SSID, configuration::wifi::Password);
+                    sentinel::configuration::wifi::SSID, 
+                    sentinel::configuration::wifi::PASSWORD);
             logger->info("Initialized");
             return;
     }

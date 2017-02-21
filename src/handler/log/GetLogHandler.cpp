@@ -30,9 +30,9 @@ namespace sentinel {
 
             bool GetLogHandler::handle() {
                 logger->debug("Opening file... " + 
-                    sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName);   
+                    std::string(sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName));   
                 File file = SD.open(
-                        sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName.c_str(), 
+                        sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName, 
                             FILE_READ);
 
                 if (!sd::file::valid(&file)) {
