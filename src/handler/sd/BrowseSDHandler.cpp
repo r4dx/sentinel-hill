@@ -43,7 +43,7 @@ namespace sentinel {
                 browsePath = getBrowsePath();
                 logger->debug("Browsing SD: %s", browsePath.c_str());
                 
-                if (::sd::file::isFolder(browsePath.c_str()))
+                if (sentinel::sd::file::isFolder(browsePath.c_str()))
                     return serveFolder();
                 
                 return serveFile();
@@ -52,13 +52,13 @@ namespace sentinel {
             bool BrowseSDHandler::serveFile() {
                 File file = SD.open(browsePath.c_str(), FILE_READ);
 
-                if (!::sd::file::valid(&file)) {
+                if (!sentinel::sd::file::valid(&file)) {
                     logger->error("Cannot open file");   
                     return false;
                 }
                 
                 logger->debug("Converting to IWebFile... %s", file.name());
-                ::sd::file::SDWebFile webFile(&file);
+                sentinel::sd::file::SDWebFile webFile(&file);
                 sender->streamFile(webFile, "");
                 file.close();
                 return true;                
@@ -71,7 +71,7 @@ namespace sentinel {
                 renderUpLink(&renderer);
                     
                 File folder = SD.open(browsePath.c_str());
-                for (::sd::file::FileListIterator itr(folder);
+                for (sentinel::sd::file::FileListIterator itr(folder);
                         itr != itr.end(); ++itr) {
                     
                     std::string linkPath = pathPrefix + browsePath + *itr->fileName;                    
