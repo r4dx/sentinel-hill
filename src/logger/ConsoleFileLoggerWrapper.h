@@ -17,7 +17,7 @@ namespace sentinel {
             Logger* get();
             bool erase();
             
-            const static std::string DefaultLoggerFileName;
+            static const char DefaultLoggerFileName[];
         private:  
             File file;
             std::string fileName;
