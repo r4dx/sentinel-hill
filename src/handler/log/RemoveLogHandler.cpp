@@ -68,7 +68,8 @@ namespace sentinel {
                         method == web::Method::DELETE;
             }
 
-            RemoveLogHandler::RemoveLogHandler(sentinel::log::ConsoleFileLoggerWrapper& loggerWrapper) : 
+            RemoveLogHandler::RemoveLogHandler(
+                sentinel::log::ConsoleFileLoggerWrapper& loggerWrapper) : 
                     loggerWrapper(loggerWrapper), 
                     sender(nullptr),
                     uri(""),

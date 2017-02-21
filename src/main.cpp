@@ -1,5 +1,5 @@
 #ifndef UNIT_TEST
-#include <vector> // hack to make it compile - https://github.com/esp8266/Arduino/issues/2549
+//#include <vector> // hack to make it compile - https://github.com/esp8266/Arduino/issues/2549
 #include <WiFiClient.h>
 #include <Arduino.h>
 #include "web/ESPWebServer.h"
@@ -10,21 +10,26 @@
 #include "handler/log/GetLogHandler.h"
 #include "handler/log/RemoveLogHandler.h"
 #include "handler/sd/BrowseSDHandler.h"
+#include "time/TimeString.h"
 
 sentinel::ota::OverTheAirUploadReceiver* otaReceiver = nullptr;
 sentinel::log::ConsoleFileLoggerWrapper* loggerWrapper;
 sentinel::web::IWebServer* web;
 
-void setup() {
+void initLogger() {
     loggerWrapper = new sentinel::log::ConsoleFileLoggerWrapper(
             sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName,
-            *(new MillisTimeProvider()));
+            *(new sentinel::time::MillisTimeProvider()));
     
     auto logger = loggerWrapper->get();
-    
-    logger->setLevel(sentinel::log::DEBUG);
-    logger->info("loading stage 1...");
+    logger->setLevel(sentinel::log::DEBUG);    
+}
 
+void initWebServer() {
+    auto logger = loggerWrapper->get();
+    logger->info("Loading handlers");
+    
+    // Will be never deleted!
     auto getLogHandler = new sentinel::handler::log::GetLogHandler(logger);
     auto removeLogHandler = new sentinel::handler::log::RemoveLogHandler(*loggerWrapper);
     auto browseSDHandler = new sentinel::handler::sd::BrowseSDHandler(logger);
@@ -35,16 +40,24 @@ void setup() {
     web->on(*getLogHandler);
     web->on(*removeLogHandler);
     web->on(*browseSDHandler);
-    web->start();
+    logger->info("Starting web server");
+    web->start();    
+    logger->info("Started successfully");
+}
+
+void setup() {
+    initLogger();
+    initWebServer();
 }
 
 void loop() {
     auto logger = loggerWrapper->get();
     
     if (otaReceiver == nullptr) {
-        logger->info("loading stage 2...");
+        logger->info("Initializing Over-the-air update receiver");
             otaReceiver = new sentinel::ota::OverTheAirUploadReceiver(*logger, 
                     configuration::wifi::SSID, configuration::wifi::Password);
+            logger->info("Initialized");
             return;
     }
 
@@ -53,7 +66,7 @@ void loop() {
 
     web->process();
 
-    //logger->info("YES");
+    //logger->info("Ping");
     delay(100);
 }
 #endif

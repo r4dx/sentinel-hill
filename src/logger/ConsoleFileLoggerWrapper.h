@@ -11,7 +11,7 @@ namespace sentinel {
         class ConsoleFileLoggerWrapper {
         public:
             ConsoleFileLoggerWrapper(std::string fileName, 
-                    ITimeProvider& timeProvider);
+                    time::ITimeProvider& timeProvider);
             
             virtual ~ConsoleFileLoggerWrapper();
             Logger* get();
@@ -21,7 +21,7 @@ namespace sentinel {
         private:  
             File file;
             std::string fileName;
-            ITimeProvider& timeProvider;
+            time::ITimeProvider& timeProvider;
             
             Logger* logger;
             stream::DualStreamValve* dualStream;

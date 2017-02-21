@@ -4,18 +4,21 @@
 #include <string>
 #include <ctime>
 
-class ITimeProvider {
-public:
-    virtual std::string now() const = 0;
-};
+namespace sentinel {
+    namespace time {
+        class ITimeProvider {
+        public:
+            virtual std::string now() const = 0;
+        };
 
-class MillisTimeProvider : public ITimeProvider {
-public:
-    std::string now() const;
-    
-private:
-    std::time_t getUnixTime() const;
-};
+        class MillisTimeProvider : public ITimeProvider {
+        public:
+            std::string now() const override;
 
+        private:
+            std::time_t getUnixTime() const;
+        };
+    }
+}
 #endif /* TIMESTRING_H */
 

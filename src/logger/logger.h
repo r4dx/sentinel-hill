@@ -17,7 +17,7 @@ namespace sentinel {
 
         class Logger {
         public:
-            Logger(Print& stream, const ITimeProvider& timeProvider);
+            Logger(Print& stream, const time::ITimeProvider& timeProvider);
             void setLevel(LogLevel level);
 
             template <typename ... Args>
@@ -60,7 +60,7 @@ namespace sentinel {
 
         private:
             LogLevel level = DEBUG;
-            const ITimeProvider& timeProvider;
+            const time::ITimeProvider& timeProvider;
             Print& stream;
 
             void log(LogLevel level, std::string value);
