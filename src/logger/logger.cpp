@@ -7,7 +7,7 @@
 namespace sentinel {
     namespace log {
         Logger::Logger(Print& stream, 
-                const ITimeProvider& timeProvider) : 
+                const time::ITimeProvider& timeProvider) : 
                 timeProvider(timeProvider),
                 stream(stream) {   
         }

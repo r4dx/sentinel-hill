@@ -2,77 +2,82 @@
 #include "File.h"
 #include <assert.h>
 
-sd::file::FileListIterator::FileListIterator(File& folder) 
-    : folder(&folder), current(nullptr), isEnd(false) 
-{ 
-    folder.rewindDirectory();
-    next(); 
-}
+namespace sd {
+    namespace file {
 
-sd::file::FileListIterator::FileListIterator() : folder(nullptr), 
-        current(nullptr), isEnd(true) {
-    
-}
+        FileListIterator::FileListIterator(File& folder) 
+            : folder(&folder), current(nullptr), isEnd(false) 
+        { 
+            folder.rewindDirectory();
+            next(); 
+        }
 
-sd::file::FileListIterator& sd::file::FileListIterator::operator++ () {
-    next();
-    return *this;
-}
+        FileListIterator::FileListIterator() : folder(nullptr), 
+                current(nullptr), isEnd(true) {
 
-void sd::file::FileListIterator::next() {
-    if (isEnd)
-        return;
-    
-    File entry = folder->openNextFile();
-    bool isValid = sd::file::valid(&entry);
-    bool isDir = entry.isDirectory();
-    char* name = entry.name();
-    entry.close();
+        }
 
-    if (!isValid) {
-        isEnd = true;
-        current = std::shared_ptr<FileEntry>(nullptr);
-        return;
+        FileListIterator& FileListIterator::operator++ () {
+            next();
+            return *this;
+        }
+
+        void FileListIterator::next() {
+            if (isEnd)
+                return;
+
+            File entry = folder->openNextFile();
+            bool isValid = valid(&entry);
+            bool isDir = entry.isDirectory();
+            char* name = entry.name();
+            entry.close();
+
+            if (!isValid) {
+                isEnd = true;
+                current = std::shared_ptr<FileEntry>(nullptr);
+                return;
+            }
+
+            if (current == nullptr)
+                current = std::shared_ptr<FileEntry>(new FileEntry());
+
+            current->fileName = std::shared_ptr<std::string>(new std::string(name));
+            current->isDirectory = isDir;    
+        }
+
+        FileEntry& FileListIterator::operator* () const {
+            assert(current != nullptr && "Invalid iterator dereference");
+            return *current;
+        }
+
+        FileEntry* FileListIterator::operator-> () const {
+            assert(current != nullptr && "Invalid iterator dereference");
+            return current.get();
+        }
+
+        FileListIterator FileListIterator::operator++ (int) {
+            FileListIterator tmp(*this);
+            next();
+            return tmp;
+        }
+        bool FileListIterator::operator== (
+            const FileListIterator& rhs) const {
+            return equals(rhs);
+        }
+
+        bool FileListIterator::operator!= (
+            const FileListIterator& rhs) const {
+            return !equals(rhs);
+        }
+
+        bool FileListIterator::equals(
+            const FileListIterator& rhs) const {
+            return current == rhs.current && isEnd == rhs.isEnd;
+        }
+
+         const FileListIterator& FileListIterator::end() {
+            static FileListIterator end_itr;
+            return end_itr;
+        }
     }
-    
-    if (current == nullptr)
-        current = std::shared_ptr<FileEntry>(new FileEntry());
-    
-    current->fileName = std::shared_ptr<std::string>(new std::string(name));
-    current->isDirectory = isDir;    
-}
-
-sd::file::FileEntry& sd::file::FileListIterator::operator* () const {
-    assert(current != nullptr && "Invalid iterator dereference");
-    return *current;
-}
-
-sd::file::FileEntry* sd::file::FileListIterator::operator-> () const {
-    assert(current != nullptr && "Invalid iterator dereference");
-    return current.get();
-}
-
-sd::file::FileListIterator sd::file::FileListIterator::operator++ (int) {
-    FileListIterator tmp(*this);
-    next();
-    return tmp;
-}
-bool sd::file::FileListIterator::operator== (
-    const sd::file::FileListIterator& rhs) const {
-    return equals(rhs);
-}
-
-bool sd::file::FileListIterator::operator!= (
-    const sd::file::FileListIterator& rhs) const {
-    return !equals(rhs);
-}
-
-bool sd::file::FileListIterator::equals(
-    const sd::file::FileListIterator& rhs) const {
-    return current == rhs.current && isEnd == rhs.isEnd;
-}
-
- const sd::file::FileListIterator& sd::file::FileListIterator::end() {
-    static sd::file::FileListIterator end_itr;
-    return end_itr;
 }

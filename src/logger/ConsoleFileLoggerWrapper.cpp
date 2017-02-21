@@ -7,7 +7,7 @@ namespace sentinel {
     namespace log {
         
         ConsoleFileLoggerWrapper::ConsoleFileLoggerWrapper(std::string fileName, 
-                ITimeProvider& timeProvider) :
+                time::ITimeProvider& timeProvider) :
 
                 logger(nullptr),
                 dualStream(nullptr),
