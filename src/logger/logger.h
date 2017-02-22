@@ -67,8 +67,6 @@ namespace sentinel {
             const char* format(LogLevel level, std::string value);
             std::string levelToStr(LogLevel level) const;    
 
-            static Logger* defaultLogger;
-
             template <typename ... Args>
             void log(LogLevel level, std::string format, Args const & ... args) {
                 if (level < this->level)
