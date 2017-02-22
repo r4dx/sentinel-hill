@@ -17,7 +17,7 @@ namespace sentinel {
             DualStreamValve(Stream& stream1, Stream& stream2);
 
             size_t write(uint8_t) override;
-            size_t write(const uint8_t *buffer, size_t size) override;
+            size_t write(const uint8_t* buffer, size_t size) override;
 
             void off(StreamNum printNum);
             void on(StreamNum printNum);
