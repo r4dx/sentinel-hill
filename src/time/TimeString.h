@@ -9,7 +9,7 @@ namespace sentinel {
         class ITimeProvider {
         public:
             virtual std::string now() const = 0;
-            virtual ~ITimeProvider();
+            virtual ~ITimeProvider() { };
         };
 
         class MillisTimeProvider : public ITimeProvider {

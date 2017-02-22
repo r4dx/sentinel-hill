@@ -14,8 +14,6 @@ namespace sentinel {
         std::time_t MillisTimeProvider::getUnixTime() const {
             return millis() / 1000;
         }
-        
-        ITimeProvider::~ITimeProvider() { }
     }
 }
 #endif
