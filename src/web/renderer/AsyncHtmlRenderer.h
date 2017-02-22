@@ -12,7 +12,7 @@ namespace sentinel {
         namespace renderer {
             class AsyncHtmlRenderer: public IRenderer {
             public:                              
-                AsyncHtmlRenderer(IWebSender* sender);
+                AsyncHtmlRenderer(IWebSender& sender);
                 ~AsyncHtmlRenderer();
                 bool render(Text& renderable) override;
                 bool render(Link& renderable) override;
@@ -20,7 +20,7 @@ namespace sentinel {
                 bool end(std::string name) override;
                 bool newLine() override;
             private:
-                IWebSender* sender;
+                IWebSender& sender;
             };
         }
     }

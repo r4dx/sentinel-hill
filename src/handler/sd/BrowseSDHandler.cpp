@@ -66,7 +66,7 @@ namespace sentinel {
             }
             
             bool BrowseSDHandler::serveFolder() {
-                web::renderer::AsyncHtmlRenderer renderer(sender);
+                web::renderer::AsyncHtmlRenderer renderer(*sender);
                 const std::string BODY_TAG = "body";
                 renderer.start(BODY_TAG);
                 renderUpLink(&renderer);
