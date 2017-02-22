@@ -23,13 +23,11 @@ namespace sentinel {
 
             template <typename ... Args>
             inline void debug(const char* format, Args const & ... args) {
-                Serial.println("Writing debug");
                 this->log(DEBUG, std::string(format), args ...);
             }
 
             template <typename ... Args>
             inline void debug(std::string format, Args const & ... args) {
-                Serial.println("Writing debug");
                 this->log(DEBUG, format, args ...);
 
             }
