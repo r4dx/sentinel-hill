@@ -35,12 +35,12 @@ namespace sentinel {
                         sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName, 
                             FILE_READ);
 
-                if (!sd::file::valid(&file)) {
+                if (!sd::file::valid(file)) {
                     logger.error("Cannot open file");   
                     return false;
                 }
                 logger.debug("Converting to IWebFile... %s", file.name());
-                sd::file::SDWebFile webFile(&file);
+                sd::file::SDWebFile webFile(file);
                 sender->streamFile(webFile, "");
                 file.close();
                 return true;

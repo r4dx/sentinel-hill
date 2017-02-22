@@ -36,7 +36,7 @@ namespace sentinel {
         
         bool ConsoleFileLoggerWrapper::openFile() {
             file = SD.open(fileName->c_str(), FILE_WRITE);
-            return sd::file::valid(&file);
+            return sd::file::valid(file);
         }
         
         ConsoleFileLoggerWrapper::~ConsoleFileLoggerWrapper() {
@@ -45,7 +45,7 @@ namespace sentinel {
             if (dualStream != nullptr)
                 delete dualStream;
             
-            if (sd::file::valid(&file))
+            if (sd::file::valid(file))
                 file.close();
         }
         

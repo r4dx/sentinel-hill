@@ -8,18 +8,18 @@ namespace sentinel {
         namespace file {
             class SDWebFile : public sentinel::web::IWebFile {
             public:
-                SDWebFile(File* file) : file(file) {};
+                SDWebFile(File& file) : file(file) {};
 
-                size_t size() override { return file->size(); };
-                String name() override { return file->name(); };
-                size_t available() override { return file->available(); };
+                size_t size() override { return file.size(); };
+                String name() override { return file.name(); };
+                size_t available() override { return file.available(); };
 
                 void read(uint8_t* buffer, size_t will_send) override { 
-                    file->read(buffer, will_send); 
+                    file.read(buffer, will_send); 
                 };
 
             private:
-                File* file;
+                File& file;
             };
         }
     }

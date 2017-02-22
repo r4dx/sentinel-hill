@@ -29,7 +29,7 @@ namespace sentinel {
                     return;
 
                 File entry = folder->openNextFile();
-                bool isValid = valid(&entry);
+                bool isValid = valid(entry);
                 bool isDir = entry.isDirectory();
                 char* name = entry.name();
                 entry.close();

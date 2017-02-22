@@ -53,13 +53,13 @@ namespace sentinel {
             bool BrowseSDHandler::serveFile() {
                 File file = SD.open(browsePath.c_str(), FILE_READ);
 
-                if (!sentinel::sd::file::valid(&file)) {
+                if (!sentinel::sd::file::valid(file)) {
                     logger.error("Cannot open file");   
                     return false;
                 }
                 
                 logger.debug("Converting to IWebFile... %s", file.name());
-                sentinel::sd::file::SDWebFile webFile(&file);
+                sentinel::sd::file::SDWebFile webFile(file);
                 sender->streamFile(webFile, "");
                 file.close();
                 return true;                
