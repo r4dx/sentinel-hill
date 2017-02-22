@@ -12,26 +12,27 @@ namespace sentinel {
     namespace handler {
         namespace sd {
                         
-            void BrowseSDHandler::setPath(web::Method method, std::string uri) {   
+            void BrowseSDHandler::setPath(web::Method method, 
+                    std::shared_ptr<std::string> uri) {   
                 this->uri = uri;
                 this->method = method;
             }                
                 
             bool BrowseSDHandler::canHandle() const {
-                return uri.compare(0, pathPrefix.size(), pathPrefix) == 0 && 
+                return uri->compare(0, pathPrefix.size(), pathPrefix) == 0 && 
                         method == web::Method::GET;
             }
             
             
 
             std::string BrowseSDHandler::getBrowsePath() {
-                return uri.substr(3);
+                return uri->substr(3);
             }            
             
-            BrowseSDHandler::BrowseSDHandler(sentinel::log::Logger* logger) : 
+            BrowseSDHandler::BrowseSDHandler(sentinel::log::Logger& logger) : 
                     logger(logger), 
                     sender(nullptr),
-                    uri(""),
+                    uri(std::shared_ptr<std::string>()),
                     pathPrefix("/sd"),
                     method(web::Method::GET) { }
 
@@ -41,7 +42,7 @@ namespace sentinel {
 
             bool BrowseSDHandler::handle() {
                 browsePath = getBrowsePath();
-                logger->debug("Browsing SD: %s", browsePath.c_str());
+                logger.debug("Browsing SD: %s", browsePath.c_str());
                 
                 if (sentinel::sd::file::isFolder(browsePath.c_str()))
                     return serveFolder();
@@ -53,11 +54,11 @@ namespace sentinel {
                 File file = SD.open(browsePath.c_str(), FILE_READ);
 
                 if (!sentinel::sd::file::valid(&file)) {
-                    logger->error("Cannot open file");   
+                    logger.error("Cannot open file");   
                     return false;
                 }
                 
-                logger->debug("Converting to IWebFile... %s", file.name());
+                logger.debug("Converting to IWebFile... %s", file.name());
                 sentinel::sd::file::SDWebFile webFile(&file);
                 sender->streamFile(webFile, "");
                 file.close();
@@ -81,7 +82,7 @@ namespace sentinel {
                     web::renderer::Link link(*itr->fileName, linkPath);
                     renderer.render(link);
                     renderer.newLine();
-                    logger->debug("'%s' in folder '%s' is %s", 
+                    logger.debug("'%s' in folder '%s' is %s", 
                             itr->fileName->c_str(), browsePath.c_str(), 
                             itr->isDirectory ? "directory" : "file");
                 }

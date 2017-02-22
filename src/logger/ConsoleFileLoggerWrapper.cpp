@@ -48,8 +48,8 @@ namespace sentinel {
                 file.close();
         }
         
-        Logger* ConsoleFileLoggerWrapper::get() {
-            return logger;
+        Logger& ConsoleFileLoggerWrapper::get() {
+            return *logger;
         }
         
         bool ConsoleFileLoggerWrapper::erase() {

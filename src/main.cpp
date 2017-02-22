@@ -22,12 +22,12 @@ void initLogger() {
             *(new sentinel::time::MillisTimeProvider()));
     
     auto logger = loggerWrapper->get();
-    logger->setLevel(sentinel::log::DEBUG);    
+    logger.setLevel(sentinel::log::DEBUG);    
 }
 
 void initWebServer() {
     auto logger = loggerWrapper->get();
-    logger->info("Loading handlers");
+    logger.info("Loading handlers");
     
     // Will be never deleted!
     auto getLogHandler = new sentinel::handler::log::GetLogHandler(logger);
@@ -40,9 +40,9 @@ void initWebServer() {
     web->on(*getLogHandler);
     web->on(*removeLogHandler);
     web->on(*browseSDHandler);
-    logger->info("Starting web server");
+    logger.info("Starting web server");
     web->start();    
-    logger->info("Started successfully");
+    logger.info("Started successfully");
 }
 
 void setup() {
@@ -54,11 +54,11 @@ void loop() {
     auto logger = loggerWrapper->get();
     
     if (otaReceiver == nullptr) {
-        logger->info("Initializing Over-the-air update receiver");
-            otaReceiver = new sentinel::ota::OverTheAirUploadReceiver(*logger, 
+        logger.info("Initializing Over-the-air update receiver");
+            otaReceiver = new sentinel::ota::OverTheAirUploadReceiver(logger, 
                     sentinel::configuration::wifi::SSID, 
                     sentinel::configuration::wifi::PASSWORD);
-            logger->info("Initialized");
+            logger.info("Initialized");
             return;
     }
 

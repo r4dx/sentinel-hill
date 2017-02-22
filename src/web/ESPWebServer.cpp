@@ -4,7 +4,7 @@
 
 namespace sentinel {
     namespace web {
-        ESPWebServer::ESPWebServer(ESP8266WebServer& server, log::Logger* logger) 
+        ESPWebServer::ESPWebServer(ESP8266WebServer& server, log::Logger& logger) 
             : 
             server(server),
             wrapperList(),
@@ -68,14 +68,15 @@ namespace sentinel {
         };        
 
         ESPWebServer::RequestHandlerWrapper::RequestHandlerWrapper(
-            IWebHandler& handler, log::Logger* logger) : 
+            IWebHandler& handler, log::Logger& logger) : 
             
             handler(handler), logger(logger) {};
         
         bool ESPWebServer::RequestHandlerWrapper::canHandle(HTTPMethod method, 
                 String uri) {
             Method webMethod = httpMethodToMethod(method);            
-            handler.setPath(webMethod, std::string(uri.c_str()));
+            handler.setPath(webMethod, 
+                    std::shared_ptr<std::string>(new std::string(uri.c_str())));
             return handler.canHandle();
         }
         bool ESPWebServer::RequestHandlerWrapper::canUpload(String uri) {
@@ -86,7 +87,7 @@ namespace sentinel {
             String requestUri) {
             
             handler.setPath(httpMethodToMethod(requestMethod), 
-                    std::string(requestUri.c_str()));
+                    std::shared_ptr<std::string>(new std::string(requestUri.c_str())));
             return handler.handle();            
         }
         
@@ -94,3 +95,5 @@ namespace sentinel {
 }
 
 #endif
+
+// curl -sL -w "%{http_code}\\n" "curl -X DELETE http://192.168.0.80/logs" -o /dev/null

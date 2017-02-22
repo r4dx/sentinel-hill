@@ -14,7 +14,7 @@ namespace sentinel {
                     time::ITimeProvider& timeProvider);
             
             virtual ~ConsoleFileLoggerWrapper();
-            Logger* get();
+            Logger& get();
             bool erase();
             
             static const char DefaultLoggerFileName[];
