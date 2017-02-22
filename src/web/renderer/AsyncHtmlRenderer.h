@@ -3,7 +3,6 @@
 
 #include "IRenderer.h"
 #include "IRenderable.h"
-#include "Text.h"
 #include "Link.h"
 #include "web/IWebServer.h"
 
@@ -14,7 +13,6 @@ namespace sentinel {
             public:                              
                 AsyncHtmlRenderer(IWebSender& sender);
                 ~AsyncHtmlRenderer();
-                bool render(Text& renderable) override;
                 bool render(Link& renderable) override;
                 bool start(std::string name) override;
                 bool end(std::string name) override;
