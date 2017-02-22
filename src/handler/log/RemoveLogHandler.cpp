@@ -58,7 +58,8 @@ namespace sentinel {
     namespace handler {
         namespace log {
             
-            void RemoveLogHandler::setPath(web::Method method, std::shared_ptr<std::string> uri) {   
+            void RemoveLogHandler::setPath(web::Method method, 
+                    std::shared_ptr<std::string> uri) {   
                 this->uri = uri;
                 this->method = method;
             }                

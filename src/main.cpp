@@ -21,12 +21,11 @@ void initLogger() {
             sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName,
             *(new sentinel::time::MillisTimeProvider()));
     
-    auto logger = loggerWrapper->get();
-    logger.setLevel(sentinel::log::DEBUG);    
+    loggerWrapper->get().setLevel(sentinel::log::DEBUG);
 }
 
 void initWebServer() {
-    auto logger = loggerWrapper->get();
+    sentinel::log::Logger& logger = loggerWrapper->get();
     logger.info("Loading handlers");
     
     // Will be never deleted!

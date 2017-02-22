@@ -3,14 +3,15 @@
 #include "Arduino.h"
 #include "ConsoleFileLoggerWrapper.h"
 #include <map>
+#include <string>
 
 namespace sentinel {
     namespace log {
         Logger::Logger(Print& stream, 
                 const time::ITimeProvider& timeProvider) : 
                 timeProvider(timeProvider),
-                stream(stream) {   
-        }
+                stream(stream),
+                level(DEBUG) { }
 
         void Logger::setLevel(LogLevel level) {
             this->level = level;

@@ -5,6 +5,7 @@
 #include "time/TimeString.h"
 #include <Print.h>
 #include <string>
+#include "Arduino.h"
 
 namespace sentinel {
     namespace log {
@@ -22,11 +23,13 @@ namespace sentinel {
 
             template <typename ... Args>
             inline void debug(const char* format, Args const & ... args) {
+                Serial.println("Writing debug");
                 this->log(DEBUG, std::string(format), args ...);
             }
 
             template <typename ... Args>
             inline void debug(std::string format, Args const & ... args) {
+                Serial.println("Writing debug");
                 this->log(DEBUG, format, args ...);
 
             }
@@ -59,7 +62,7 @@ namespace sentinel {
             void error(std::string value);    
 
         private:
-            LogLevel level = DEBUG;
+            LogLevel level;
             const time::ITimeProvider& timeProvider;
             Print& stream;
 
