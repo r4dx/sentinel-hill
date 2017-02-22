@@ -4,7 +4,6 @@
 #include "sd/File.h"
 #include "sd/SDWebFile.h"
 #include "web/IWebFile.h"
-#include "web/renderer/Text.h"
 #include "web/renderer/Link.h"
 #include "web/renderer/AsyncHtmlRenderer.h"
 
@@ -75,11 +74,15 @@ namespace sentinel {
                 for (sentinel::sd::file::FileListIterator itr(folder);
                         itr != itr.end(); ++itr) {
                     
-                    std::string linkPath = pathPrefix + browsePath + *itr->fileName;                    
-                    if (itr->isDirectory)
-                        linkPath += "/";
+                    std::shared_ptr<std::string> linkPath = 
+                            std::shared_ptr<std::string>(
+                                new std::string(
+                                    pathPrefix + browsePath + *itr->fileName));
                     
-                    web::renderer::Link link(*itr->fileName, linkPath);
+                    if (itr->isDirectory)
+                        *linkPath += "/";
+                    
+                    web::renderer::Link link(itr->fileName, linkPath);
                     renderer.render(link);
                     renderer.newLine();
                     logger.debug("'%s' in folder '%s' is %s", 
@@ -103,9 +106,11 @@ namespace sentinel {
                 if (found == std::string::npos)
                     return;
                 
-                std::string upPath = pathPrefix + browsePath.substr(0, found) + 
-                        delimiter;
-                web::renderer::Link link("..", upPath);
+                std::shared_ptr<std::string> upPath = std::shared_ptr<std::string>(
+                        new std::string(pathPrefix + 
+                        browsePath.substr(0, found) + delimiter));
+                web::renderer::Link link(
+                    std::shared_ptr<std::string>(new std::string("..")), upPath);
                 renderer->render(link);
                 renderer->newLine();
             }
