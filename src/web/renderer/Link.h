@@ -10,7 +10,6 @@ namespace sentinel {
         namespace renderer {
             class Link : public IRenderable {
             public:
-                ~Link() { } ;
                 Link(const std::string label, const std::string ref);
                 bool render(IRenderer& renderer) override;
                 

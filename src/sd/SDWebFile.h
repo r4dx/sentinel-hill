@@ -8,8 +8,7 @@ namespace sentinel {
         namespace file {
             class SDWebFile : public sentinel::web::IWebFile {
             public:
-                SDWebFile(File* file) : file(file){ };
-                ~SDWebFile() {};
+                SDWebFile(File* file) : file(file) {};
 
                 size_t size() override { return file->size(); };
                 String name() override { return file->name(); };

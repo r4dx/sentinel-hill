@@ -17,7 +17,6 @@ namespace sentinel {
                 bool handle() override;
 
                 GetLogHandler(sentinel::log::Logger* logger);
-                ~GetLogHandler() override {}
             private:
                 std::string uri;
                 web::Method method;                

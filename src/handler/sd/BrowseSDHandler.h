@@ -18,7 +18,6 @@ namespace sentinel {
                 bool handle() override;
 
                 BrowseSDHandler(sentinel::log::Logger* logger);
-                ~BrowseSDHandler() override {}
             private:
                 
                 const std::string pathPrefix;
