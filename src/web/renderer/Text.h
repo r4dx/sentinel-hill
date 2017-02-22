@@ -10,7 +10,6 @@ namespace sentinel {
         namespace renderer {
             class Text : public IRenderable {
             public:
-                ~Text() { } ;
                 Text(const std::string label);
                 bool render(IRenderer& renderer) override;
                 
