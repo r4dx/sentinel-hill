@@ -85,7 +85,7 @@ namespace sentinel {
         bool ESPWebServer::RequestHandlerWrapper::handle(
             ESP8266WebServer& server, HTTPMethod requestMethod, 
             String requestUri) {
-            
+            logger.info("Processing " + std::string(requestUri.c_str()));
             handler.setPath(httpMethodToMethod(requestMethod), 
                     std::shared_ptr<std::string>(new std::string(requestUri.c_str())));
             return handler.handle();            
@@ -95,5 +95,3 @@ namespace sentinel {
 }
 
 #endif
-
-// curl -sL -w "%{http_code}\\n" "curl -X DELETE http://192.168.0.80/logs" -o /dev/null
