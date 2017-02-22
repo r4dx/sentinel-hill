@@ -5,12 +5,13 @@
 #include <string>
 #include <stream/DualStreamValve.h>
 #include "time/TimeString.h"
+#include <memory>
 
 namespace sentinel {
     namespace log {
         class ConsoleFileLoggerWrapper {
         public:
-            ConsoleFileLoggerWrapper(std::string fileName, 
+            ConsoleFileLoggerWrapper(std::shared_ptr<std::string> fileName, 
                     time::ITimeProvider& timeProvider);
             
             virtual ~ConsoleFileLoggerWrapper();
@@ -20,7 +21,7 @@ namespace sentinel {
             static const char DefaultLoggerFileName[];
         private:  
             File file;
-            std::string fileName;
+            std::shared_ptr<std::string> fileName;
             time::ITimeProvider& timeProvider;
             
             Logger* logger;

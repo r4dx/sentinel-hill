@@ -18,7 +18,9 @@ sentinel::web::IWebServer* web;
 
 void initLogger() {
     loggerWrapper = new sentinel::log::ConsoleFileLoggerWrapper(
-            sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName,
+            std::shared_ptr<std::string>(
+                new std::string(
+                    sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName)),
             *(new sentinel::time::MillisTimeProvider()));
     
     loggerWrapper->get().setLevel(sentinel::log::DEBUG);

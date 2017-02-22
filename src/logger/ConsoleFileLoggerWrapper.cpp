@@ -6,8 +6,9 @@
 namespace sentinel {
     namespace log {
         
-        ConsoleFileLoggerWrapper::ConsoleFileLoggerWrapper(std::string fileName, 
-                time::ITimeProvider& timeProvider) :
+        ConsoleFileLoggerWrapper::ConsoleFileLoggerWrapper(
+            std::shared_ptr<std::string> fileName, 
+            time::ITimeProvider& timeProvider) :
 
                 logger(nullptr),
                 dualStream(nullptr),
@@ -34,7 +35,7 @@ namespace sentinel {
         }
         
         bool ConsoleFileLoggerWrapper::openFile() {
-            file = SD.open(fileName.c_str(), FILE_WRITE);
+            file = SD.open(fileName->c_str(), FILE_WRITE);
             return sd::file::valid(&file);
         }
         
@@ -58,10 +59,10 @@ namespace sentinel {
             
             dualStream->off(stream::StreamNum::Second);
             file.close();
-            logger->info("Removing file - %s!", fileName.c_str());
+            logger->info("Removing file - %s!", fileName->c_str());
             
             // This hacky cast came from here: http://www.esp8266.com/viewtopic.php?f=32&t=10755
-            SD.remove((char*)fileName.c_str());
+            SD.remove((char*)fileName->c_str());
             if (!openFile()) {
                 Serial.println("ERROR! Could not open file");
                 delete logger;
