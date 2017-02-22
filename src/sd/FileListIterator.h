@@ -32,8 +32,7 @@ namespace sentinel {
 
                 bool isEnd;
                 File* folder;
-                const FileListIterator* end_iterator;
-                
+                std::shared_ptr<const FileListIterator> end_iterator;
                 std::shared_ptr<FileEntry> current;
 
             };

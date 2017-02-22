@@ -9,19 +9,19 @@
 namespace sentinel {
     namespace handler {
         namespace log {
-            void GetLogHandler::setPath(web::Method method, std::string uri) {   
+            void GetLogHandler::setPath(web::Method method, std::shared_ptr<std::string> uri) {   
                 this->uri = uri;
                 this->method = method;
             }                
                 
             bool GetLogHandler::canHandle() const {   
-                return uri.compare("/logs") == 0 && method == web::Method::GET;
+                return uri->compare("/logs") == 0 && method == web::Method::GET;
             }
 
-            GetLogHandler::GetLogHandler(sentinel::log::Logger* logger) : 
+            GetLogHandler::GetLogHandler(sentinel::log::Logger& logger) : 
                     logger(logger), 
                     sender(nullptr),
-                    uri(""),
+                    uri(std::shared_ptr<std::string>()),
                     method(web::Method::DELETE) { }
 
             void GetLogHandler::setSender(web::IWebSender& sender) {
@@ -29,18 +29,18 @@ namespace sentinel {
             }
 
             bool GetLogHandler::handle() {
-                logger->debug("Opening file... " + 
+                logger.debug("Opening file... " + 
                     std::string(sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName));   
                 File file = SD.open(
                         sentinel::log::ConsoleFileLoggerWrapper::DefaultLoggerFileName, 
                             FILE_READ);
 
-                if (!sd::file::valid(&file)) {
-                    logger->error("Cannot open file");   
+                if (!sd::file::valid(file)) {
+                    logger.error("Cannot open file");   
                     return false;
                 }
-                logger->debug("Converting to IWebFile... %s", file.name());
-                sd::file::SDWebFile webFile(&file);
+                logger.debug("Converting to IWebFile... %s", file.name());
+                sd::file::SDWebFile webFile(file);
                 sender->streamFile(webFile, "");
                 file.close();
                 return true;

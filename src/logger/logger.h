@@ -5,6 +5,7 @@
 #include "time/TimeString.h"
 #include <Print.h>
 #include <string>
+#include "Arduino.h"
 
 namespace sentinel {
     namespace log {
@@ -59,7 +60,7 @@ namespace sentinel {
             void error(std::string value);    
 
         private:
-            LogLevel level = DEBUG;
+            LogLevel level;
             const time::ITimeProvider& timeProvider;
             Print& stream;
 

@@ -17,7 +17,7 @@ namespace sentinel {
         
         class ESPWebServer : public IWebServer, IWebSender {
         public:
-            ESPWebServer(ESP8266WebServer& server, log::Logger* logger);
+            ESPWebServer(ESP8266WebServer& server, log::Logger& logger);
 
             bool on(IWebHandler& handler) override;
             void start() override;
@@ -35,12 +35,12 @@ namespace sentinel {
         private:                     
             ESP8266WebServer& server;
             bool started = false;
-            log::Logger* logger;
+            log::Logger& logger;
             
             
             class RequestHandlerWrapper : public RequestHandler {
             public:
-                RequestHandlerWrapper(IWebHandler& handler, log::Logger* logger);
+                RequestHandlerWrapper(IWebHandler& handler, log::Logger& logger);
                 
                 bool canHandle(HTTPMethod method, String uri) override;
                 bool canUpload(String uri) override;
@@ -49,7 +49,7 @@ namespace sentinel {
                 
             private:
                 IWebHandler& handler;
-                log::Logger* logger;
+                log::Logger& logger;
             };
 
             collections::ptr_list<RequestHandlerWrapper> wrapperList;

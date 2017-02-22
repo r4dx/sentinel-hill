@@ -4,7 +4,6 @@
 #include "sd/File.h"
 #include "sd/SDWebFile.h"
 #include "web/IWebFile.h"
-#include "web/renderer/Text.h"
 #include "web/renderer/Link.h"
 #include "web/renderer/AsyncHtmlRenderer.h"
 
@@ -12,26 +11,27 @@ namespace sentinel {
     namespace handler {
         namespace sd {
                         
-            void BrowseSDHandler::setPath(web::Method method, std::string uri) {   
+            void BrowseSDHandler::setPath(web::Method method, 
+                    std::shared_ptr<std::string> uri) {   
                 this->uri = uri;
                 this->method = method;
             }                
                 
             bool BrowseSDHandler::canHandle() const {
-                return uri.compare(0, pathPrefix.size(), pathPrefix) == 0 && 
+                return uri->compare(0, pathPrefix.size(), pathPrefix) == 0 && 
                         method == web::Method::GET;
             }
             
             
 
             std::string BrowseSDHandler::getBrowsePath() {
-                return uri.substr(3);
+                return uri->substr(3);
             }            
             
-            BrowseSDHandler::BrowseSDHandler(sentinel::log::Logger* logger) : 
+            BrowseSDHandler::BrowseSDHandler(sentinel::log::Logger& logger) : 
                     logger(logger), 
                     sender(nullptr),
-                    uri(""),
+                    uri(std::shared_ptr<std::string>()),
                     pathPrefix("/sd"),
                     method(web::Method::GET) { }
 
@@ -41,7 +41,7 @@ namespace sentinel {
 
             bool BrowseSDHandler::handle() {
                 browsePath = getBrowsePath();
-                logger->debug("Browsing SD: %s", browsePath.c_str());
+                logger.debug("Browsing SD: %s", browsePath.c_str());
                 
                 if (sentinel::sd::file::isFolder(browsePath.c_str()))
                     return serveFolder();
@@ -52,20 +52,20 @@ namespace sentinel {
             bool BrowseSDHandler::serveFile() {
                 File file = SD.open(browsePath.c_str(), FILE_READ);
 
-                if (!sentinel::sd::file::valid(&file)) {
-                    logger->error("Cannot open file");   
+                if (!sentinel::sd::file::valid(file)) {
+                    logger.error("Cannot open file");   
                     return false;
                 }
                 
-                logger->debug("Converting to IWebFile... %s", file.name());
-                sentinel::sd::file::SDWebFile webFile(&file);
+                logger.debug("Converting to IWebFile... %s", file.name());
+                sentinel::sd::file::SDWebFile webFile(file);
                 sender->streamFile(webFile, "");
                 file.close();
                 return true;                
             }
             
             bool BrowseSDHandler::serveFolder() {
-                web::renderer::AsyncHtmlRenderer renderer(sender);
+                web::renderer::AsyncHtmlRenderer renderer(*sender);
                 const std::string BODY_TAG = "body";
                 renderer.start(BODY_TAG);
                 renderUpLink(&renderer);
@@ -74,14 +74,18 @@ namespace sentinel {
                 for (sentinel::sd::file::FileListIterator itr(folder);
                         itr != itr.end(); ++itr) {
                     
-                    std::string linkPath = pathPrefix + browsePath + *itr->fileName;                    
-                    if (itr->isDirectory)
-                        linkPath += "/";
+                    std::shared_ptr<std::string> linkPath = 
+                            std::shared_ptr<std::string>(
+                                new std::string(
+                                    pathPrefix + browsePath + *itr->fileName));
                     
-                    web::renderer::Link link(*itr->fileName, linkPath);
+                    if (itr->isDirectory)
+                        *linkPath += "/";
+                    
+                    web::renderer::Link link(itr->fileName, linkPath);
                     renderer.render(link);
                     renderer.newLine();
-                    logger->debug("'%s' in folder '%s' is %s", 
+                    logger.debug("'%s' in folder '%s' is %s", 
                             itr->fileName->c_str(), browsePath.c_str(), 
                             itr->isDirectory ? "directory" : "file");
                 }
@@ -102,9 +106,11 @@ namespace sentinel {
                 if (found == std::string::npos)
                     return;
                 
-                std::string upPath = pathPrefix + browsePath.substr(0, found) + 
-                        delimiter;
-                web::renderer::Link link("..", upPath);
+                std::shared_ptr<std::string> upPath = std::shared_ptr<std::string>(
+                        new std::string(pathPrefix + 
+                        browsePath.substr(0, found) + delimiter));
+                web::renderer::Link link(
+                    std::shared_ptr<std::string>(new std::string("..")), upPath);
                 renderer->render(link);
                 renderer->newLine();
             }

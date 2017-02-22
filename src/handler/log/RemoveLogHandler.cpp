@@ -58,13 +58,14 @@ namespace sentinel {
     namespace handler {
         namespace log {
             
-            void RemoveLogHandler::setPath(web::Method method, std::string uri) {   
+            void RemoveLogHandler::setPath(web::Method method, 
+                    std::shared_ptr<std::string> uri) {   
                 this->uri = uri;
                 this->method = method;
             }                
                 
             bool RemoveLogHandler::canHandle() const {   
-                return uri.compare("/logs") == 0 && 
+                return uri->compare("/logs") == 0 && 
                         method == web::Method::DELETE;
             }
 
@@ -72,7 +73,7 @@ namespace sentinel {
                 sentinel::log::ConsoleFileLoggerWrapper& loggerWrapper) : 
                     loggerWrapper(loggerWrapper), 
                     sender(nullptr),
-                    uri(""),
+                    uri(std::shared_ptr<std::string>()),
                     method(web::Method::GET)
             {
 

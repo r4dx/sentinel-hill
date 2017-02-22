@@ -7,7 +7,7 @@
 namespace sentinel {
     namespace sd {
         namespace file {
-            bool valid(File* file);
+            bool valid(File& file);
             bool isFolder(std::string path);
             FileListIterator list(std::string folder);
         }

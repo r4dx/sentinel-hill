@@ -1,5 +1,6 @@
 #include "FileListIterator.h"
 #include "File.h"
+#include "logger/ConsoleFileLoggerWrapper.h"
 #include <assert.h>
 
 namespace sentinel {
@@ -7,7 +8,9 @@ namespace sentinel {
         namespace file {
 
             FileListIterator::FileListIterator(File& folder) 
-                : folder(&folder), current(nullptr), isEnd(false), end_iterator() { 
+                : folder(&folder), current(nullptr), isEnd(false), 
+                    end_iterator(std::shared_ptr<FileListIterator>(
+                        new FileListIterator())) { 
 
                 folder.rewindDirectory();
                 next(); 
@@ -26,7 +29,7 @@ namespace sentinel {
                     return;
 
                 File entry = folder->openNextFile();
-                bool isValid = valid(&entry);
+                bool isValid = valid(entry);
                 bool isDir = entry.isDirectory();
                 char* name = entry.name();
                 entry.close();
