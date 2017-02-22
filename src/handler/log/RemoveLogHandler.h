@@ -17,7 +17,6 @@ namespace sentinel {
                 bool handle() override;
 
                 RemoveLogHandler(sentinel::log::ConsoleFileLoggerWrapper& loggerWrapper);
-                ~RemoveLogHandler() override {}
             private:
                 std::string uri;
                 web::Method method;
