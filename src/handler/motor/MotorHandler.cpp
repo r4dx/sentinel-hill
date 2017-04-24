@@ -37,7 +37,7 @@ namespace sentinel {
                 mcp.begin();
                 for (int pin = 0; pin < 16; pin++) {
                     mcp.pinMode(pin, OUTPUT);
-                    sender->sendContent(to_string(pin) + " ");
+                    //sender->sendContent(to_string(pin) + " ");
                     mcp.digitalWrite(pin, HIGH);
                     delay(1000);
                     mcp.digitalWrite(pin, LOW);
@@ -45,7 +45,16 @@ namespace sentinel {
             }
             
             bool MotorHandler::handle() {
-                
+                Adafruit_MCP23017 mcp;
+                Wire.begin(5, 4);
+                mcp.begin();
+                for (int pin = 0; pin < 16; pin++) {
+                    mcp.pinMode(pin, OUTPUT);
+                    sender->sendContent(to_string(pin) + " ");
+                    mcp.digitalWrite(pin, HIGH);
+                    delay(1000);
+                    mcp.digitalWrite(pin, LOW);
+                }
             }
         }
     }
