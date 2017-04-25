@@ -25,7 +25,7 @@ namespace sentinel {
             
 
             std::string BrowseSDHandler::getBrowsePath() {
-                return uri->substr(3);
+                return uri->substr(pathPrefix.size());
             }            
             
             BrowseSDHandler::BrowseSDHandler(sentinel::log::Logger& logger) : 
