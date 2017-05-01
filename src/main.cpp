@@ -10,6 +10,7 @@
 #include "handler/log/GetLogHandler.h"
 #include "handler/log/RemoveLogHandler.h"
 #include "handler/sd/BrowseSDHandler.h"
+#include "handler/io-expander/IOExpanderHandler.h"
 #include "time/TimeString.h"
 
 sentinel::ota::OverTheAirUploadReceiver* otaReceiver = nullptr;
@@ -34,6 +35,7 @@ void initWebServer() {
     auto getLogHandler = new sentinel::handler::log::GetLogHandler(logger);
     auto removeLogHandler = new sentinel::handler::log::RemoveLogHandler(*loggerWrapper);
     auto browseSDHandler = new sentinel::handler::sd::BrowseSDHandler(logger);
+    auto ioExpanderHandler = new sentinel::handler::motor::IOExpanderHandler(logger);
 
     ESP8266WebServer* server = new ESP8266WebServer(80);
     web = new sentinel::web::ESPWebServer(*server, logger);
@@ -41,6 +43,7 @@ void initWebServer() {
     web->on(*getLogHandler);
     web->on(*removeLogHandler);
     web->on(*browseSDHandler);
+    web->on(*ioExpanderHandler);
     logger.info("Starting web server");
     web->start();    
     logger.info("Started successfully");
