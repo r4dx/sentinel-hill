@@ -3,7 +3,7 @@
  * libc is too big to be loaded in ESP RAM thus one of solutions is to just 
  * copypaste it here.
  * 
- * More details here:
+ * More details are here:
  * https://github.com/pfalcon/esp-open-sdk/issues/213
  */
 
