@@ -1,4 +1,12 @@
 .pioenvs
 .piolibdeps
+.vs
+Debug
 nbproject
 src/conf/configuration.h
+sentinel-hill.log
+sentinel-hill.sln
+sentinel-hill.vcxproj
+sentinel-hill.vcxproj.filters
+sentinel-hill.vcxproj.user
+sentinel-hill.vcxproj_backup
